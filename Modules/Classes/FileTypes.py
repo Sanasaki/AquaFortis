@@ -12,7 +12,7 @@ from chemistry.Atom import Atom
 from chemistry.Molecule import Molecule
 from File import File
 from FxMatrices import periodicBoundaryConditions
-from FxStaticFunctions import FxAssignThreadsToTasks, FxProcessTime
+from FxStaticFunctions import FxAssignThreadsToTasks, FxProcessTime, makeDir
 from matplotlib import pyplot as plt
 
 # class CP2K(File):
@@ -36,9 +36,10 @@ class AtomicCoordinatesXYZfile(File):
     def __init__(
             self, 
             filePath:           str, 
-            atomicSystemSize:   float=None, 
-            atomNumber:         int=None,
-            travisInstructions: str=None,
+            atomicSystemSize:   float   = None, 
+            atomNumber:         int     = None,
+            travisInstructions: str     = None,
+            toInitialize:       bool    = False,
             ):
         super().__init__(filePath)
         self.atomicSystemSize = atomicSystemSize
@@ -55,20 +56,20 @@ class AtomicCoordinatesXYZfile(File):
                 print("Warning: Atomic system size not specified, some functions may not work properly")
         self.atomNumber = self.getAtomNumber() if atomNumber is None else atomNumber
         self.travisInstructions = travisInstructions
-        self.framesPath = self.currentDirPath + "/framesLIGHT/"
+        self.framesPath = self.currentDirPath + f"/{self.name}-frames/"
 
         self._linesPerFrame: int = self.atomNumber+2
         self.numberOfFrames: int = self.getFileLength() % (self._linesPerFrame)
-        self._reset()
+        self._reset(toInitialize)
 
-    def _reset(self):
-        # if self.isSingleFrame():
-        self.buildDataframe()
-        self.buildPairsDistance()
-        self.buildAtoms()
-        self.buildNeighborsMatrix()
-        self.buildNeighbors()
-        self.buildMolecules()
+    def _reset(self, toInit):
+        if self.isSingleFrame() and toInit==True:
+            self.buildDataframe()
+            self.buildPairsDistance()
+            self.buildAtoms()
+            self.buildNeighborsMatrix()
+            self.buildNeighbors()
+            self.buildMolecules()
     
     # @FxProcessTime
     def _cleanMatrix(self, m: np.ndarray) -> np.ndarray:
@@ -76,7 +77,7 @@ class AtomicCoordinatesXYZfile(File):
         m = np.where(m>self.atomicSystemSize, m%self.atomicSystemSize, m)
         return m
     
-    @FxProcessTime
+    # @FxProcessTime
     def plot(self):
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
@@ -99,7 +100,7 @@ class AtomicCoordinatesXYZfile(File):
         zCoordinates    = self._cleanMatrix(self.dataFrame.z.to_numpy(dtype=float))
         return elements, xCoordinates, yCoordinates, zCoordinates
     
-    @FxProcessTime
+    # @FxProcessTime
     def buildPairsDistance(self) -> None:
         elements, x,y,z = self.getNumpyTuple()
 
@@ -125,7 +126,7 @@ class AtomicCoordinatesXYZfile(File):
 
     # @FxProcessTime
     def buildNeighborsMatrix(self, 
-        cutoffRadii:    float   = 1.55, 
+        cutoffRadii:    float   = 1.575, 
         isOneIndexed:   bool    = False
         ) -> None:
     
@@ -164,14 +165,14 @@ class AtomicCoordinatesXYZfile(File):
                 MolList.append(newMolecule)
         self.molecules = MolList
 
-    @FxProcessTime
+    # @FxProcessTime
     def getSpeciation(self) -> dict:
         speciation = {}
         for molecule in self.molecules:
             speciation[molecule] = speciation.get(molecule, 0) + 1
         return speciation 
     
-    @FxProcessTime
+    # @FxProcessTime
     def _ChunkBuildDataframe(self):
         colnames= ["Element", "x", "y", "z"]
         frameList: list = []
@@ -181,7 +182,7 @@ class AtomicCoordinatesXYZfile(File):
             frameList.append(df)
         self._frames = frameList
         
-    @FxProcessTime
+    # @FxProcessTime
     def buildDataframe(self) -> None :
         colnames= ["Element", "x", "y", "z"]
         df = pd.read_table(self.filePath, index_col=False, header=None, names=["Col"])
@@ -221,7 +222,7 @@ class AtomicCoordinatesXYZfile(File):
         with open(self.filePath, 'r') as f:
             return len(f.readlines())
 
-    @FxProcessTime        
+    # @FxProcessTime        
     def BuildTravisInstructions(self, customName:str=None):
         if customName is None:
             customName: str = "TravisInstruction.txt"
@@ -240,16 +241,18 @@ class AtomicCoordinatesXYZfile(File):
         print(f"Travis instructions written to {travisInstructionsPath}")
         return travisInstructionsPath
     
-    @FxProcessTime
+    # @FxProcessTime
     def buildFramesList(self) -> list:
         self._frames: list = glob.glob(self.framesPath + "*.xyz")
     
-    @FxProcessTime
+    # @FxProcessTime
     def SplitTrajectory(self, exportPath:str=None, dirName:str=None) -> None:
         if self.isSingleFrame() == True:
             return
         
-        @FxProcessTime
+        makeDir(self.framesPath)
+        
+        # @FxProcessTime
         def writeFrame(frameName, contentToWrite):
             with open(frameName, 'w', newline="\n") as frame:
                 frame.writelines(contentToWrite)
@@ -264,7 +267,7 @@ class AtomicCoordinatesXYZfile(File):
             Content = wholeXYZ.readlines()
             frameNumber: int = len(Content)//(self.getAtomNumber()+2)
             # n=1
-            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
                 for n in range(1, frameNumber+1):
                 # for _ in range(0, len(Content), linesToWrite):
                     frameName = f"{self.framesPath}{self.name}-f{n}.xyz"

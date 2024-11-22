@@ -44,6 +44,10 @@ def FxAssignThreadsToTasks(numThreads:int=1, inputToMultithread:list=[]) -> dict
     #     return inner
     # return decorator
 
+def makeDir(pathToWrite):
+    if not os.path.exists(pathToWrite):
+        os.mkdir(pathToWrite)
+
 def FxProcessTime(func):
     @wraps(func)
     def inner(*args, **kwargs):
