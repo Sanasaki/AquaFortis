@@ -1,0 +1,10 @@
+__pycache__/
+.env
+*.log
+*.pyc
+.vscode/
+backup_env/
+TestFiles/
+python3.12backup/
+python313t/
+Python.zip
