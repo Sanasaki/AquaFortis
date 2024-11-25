@@ -1,35 +1,41 @@
-import asyncio
+# from chemistry.Atom import Atom
 import concurrent.futures
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from multiprocessing.pool import ThreadPool
 from tkinter import filedialog as fd
 
-from FileTypes import AtomicCoordinatesXYZfile
-from FxStaticFunctions import FxAssignThreadsToTasks, FxProcessTime
+from AtomicSystem import AtomicSystem
+from FileTypes import AtomicCoordinatesXYZfile, CP2Kfile
 
+
+def writingFile(exportPath: str, speciations, name):
+    path = exportPath + f'/{name}-speciation.txt'
+    print(path)
+    with open(path, 'w')as outfile:
+        for key, item in dict(sorted(speciations.items())).items():
+            outfile.write(f"{key} {item}\n")
+
+def indirectGetSpeciation(xyzFile):
+    currentDirPath = "/".join(xyzFile.split("/")[:-1]) + f"/{xyzFile.split("/")[-1].split(".")[0]}.inp"
+    cp2kFile = CP2Kfile(currentDirPath)
+    atomicFile = AtomicCoordinatesXYZfile(xyzFile, toInitialize=True, linkedCP2KFile=cp2kFile)
+    print("Reading:", atomicFile.name)
+    # atomicSystem = AtomicSystem(atomicFile.atoms, atomicFile.atomicSystemSize)
+    speciations = atomicFile._trajectorySlicer()
+    return speciations
 
 def main(**argv):
-    path: str = fd.askopenfilename(title='Select a file',
-                                   initialdir=r'C:\Users\JL252842\Documents\Thesis\Python\TestFiles/')
+    xyzFilesToGetSpeciation = fd.askopenfilenames(title='Select XYZ files', initialdir=r'C:\Users\JL252842\Documents\Thesis\Data\Raw\Simulations\2024-11-22\AIMD-SCAN-AF')
 
-    xyzFile = AtomicCoordinatesXYZfile(path, 18.1462749444, toInitialize=True)
-    # speciation = xyzFile.getSpeciation()
-    # print(speciation)
-    frames = splittingFile(path)
-    speciations = applyingSpeciation(frames)
-    writingFile(speciations, xyzFile.name)
+    exportPath: str = fd.askdirectory(title='Select export directory', initialdir=r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput")
 
-
-
+    with concurrent.futures.ProcessPoolExecutor(max_workers=12) as multiProcess:
+        speciationsResults = multiProcess.map(indirectGetSpeciation, xyzFilesToGetSpeciation)
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=12) as multiThread:
+        for xyzFilePath, data in zip(xyzFilesToGetSpeciation, speciationsResults):
+            name = xyzFilePath.split("/")[-1].split(".")[0]
+            print("Writing:", name)
+            writingFile(exportPath, data, name)
     
-    # print(xyzFile.getSpeciation())
-    # print(12//7)
-     
-    # # tasks = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
-    # tasks = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p']
 
-    # Threads = FxAssignThreadsToTasks(3, tasks)
-    # print(Threads)
     
 if __name__ == "__main__":
     main()

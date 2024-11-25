@@ -4,9 +4,8 @@ from operator import countOf
 from time import sleep
 from typing import List
 
-from matplotlib import pyplot as plt
-
 from chemistry.Atom import Atom
+from matplotlib import pyplot as plt
 
 # class Element:
 #     def __init__(self, symbol: str, atomicNumber: int=None, atomicWeight: float=None):
@@ -76,16 +75,16 @@ class Molecule:
         for elementSymbol, elementCount in atomicMatches:
             if elementCount == "":
                 elementCount = 1
-            element = Atom(symbol=elementSymbol)
+            element = Atom(chemSymbol=elementSymbol)
             atomicComposition[element] = float(elementCount)*formulaRepetition
 
         return atomicComposition
     
     def _setAtomicSystem(self) -> None:
-        self._atomsSymbol = {atom: atom.symbol for atom in self.atoms}
+        self._atomsSymbol = {atom: atom.chemSymbol for atom in self.atoms}
     
     def _getAtomSymbols(self) -> list:
-        return sorted([atom.symbol for atom in self.atoms])
+        return sorted([atom.chemSymbol for atom in self.atoms])
        
     
     def _checkConflict(self):
@@ -138,14 +137,14 @@ class Molecule:
         ax.set_zlim([0, atomicSystemSize])
         # element, x, y, z = self.getNumpyTuple()
         colorAtom = {"H": "green", "N" : "blue", "O": "red"}
-        colorList = [colorAtom[atom.symbol] for atom in self.atoms]
+        colorList = [colorAtom[atom.chemSymbol] for atom in self.atoms]
         x = [atom.x for atom in self.atoms]
         y = [atom.y for atom in self.atoms]
         z = [atom.z for atom in self.atoms]
         if printPositions==True:
             print(f"{self}")
             for atom in self.atoms:
-                print(atom.symbol, atom.x, atom.y, atom.z)
+                print(atom.chemSymbol, atom.x, atom.y, atom.z)
         ax.scatter3D(x,y,z, c=colorList, s=100)
         plt.show()
         

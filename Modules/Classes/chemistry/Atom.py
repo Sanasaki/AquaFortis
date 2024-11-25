@@ -1,5 +1,7 @@
 
 
+# from chemistry.Molecule import Molecule
+
 periodicTable: dict = {
     "H" :   {"atomicWeight": 1.0080,    "atomicNumber": 1 },
     "He":   {"atomicWeight": 4.00260,   "atomicNumber": 2 },
@@ -21,44 +23,44 @@ class Atom():
 
 
     def __init__(self, 
-                symbol: str,
+                chemSymbol: str,
                 atomicNumber: int=None, 
                 atomicWeight: float=None, 
                 coordinates: list=None,
                 x: float=None,
                 y: float=None,
                 z: float=None,
-                molecule=None,
+                # molecule=None,
                 ):
-        self.symbol:        str     = symbol
+        self.chemSymbol:    str     = chemSymbol
         self.atomicNumber:  int     = atomicNumber
         self.atomicWeight:  float   = atomicWeight
         self.x:   float = x
         self.y:   float = y
         self.z:   float = z
-        self._molecule=molecule
+        # self._molecule: Molecule    = molecule
 
     def __repr__(self):
-        return f"{self.symbol}"
+        return f"{self.chemSymbol}"
     
     def __hash__(self):
-        return hash(self.symbol) + hash(self.x) + hash(self.y) + hash(self.z)
+        return hash(self.chemSymbol) + hash(self.x) + hash(self.y) + hash(self.z)
     
     def __lt__(self, other):
-        return self.symbol < other.symbol
+        return self.chemSymbol < other.chemSymbol
 
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()
 
     
     # m'y prends-je de la bonne manière pour définir des propriétés privées ? devraient-elles être privées ?même remarque pour self.atoms de la classe molécule
-    @property
-    def molecule(self):
-        return self._molecule
+    # @property
+    # def molecule(self):
+    #     return self._molecule
 
-    @molecule.setter
-    def molecule(self, aaa):
-        self._molecule = aaa 
+    # @molecule.setter
+    # def molecule(self, aaa):
+    #     self._molecule = aaa 
     
 
     
