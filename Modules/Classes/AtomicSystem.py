@@ -1,61 +1,27 @@
-from abc import ABC
 from typing import Iterable
 
 import numpy as np
-import pandas as pd
-from FxMatrices import periodicBoundaryConditions
 
 from chemistry.Atom import Atom
 from chemistry.Molecule import Molecule
 
 
-class Volume(ABC):
-    def __init__(self, volume:float) -> None:
-        self.volume = volume
-
 class AtomicSystem():
     def __init__(
             self,
-            inputData:  
-                list[Atom]
-                | tuple[list[str], np.ndarray] 
-                | Iterable[str] 
-                = None,
-            size:         float = None,
-            tryBuildAtoms: bool = False,
+            inputData: Iterable[str]= None,
+            size:           float   = None,
             ):
         
-        # self.inputData = inputData
         if size is not None: self.size = size
-
-        # if tryBuildAtoms:
-        #     if isinstance(inputData, list[Atom]):
-        #         self.atoms      = inputData
-        #         self.atomsTuple = self._getNumPyArrays()
-        #     elif isinstance(inputData, Iterable[str]):
-        #         self.atoms      = self._getAtomsFromStrIter(inputData)
-        #         self.atomsTuple = self._getNumPyArrays()
-        #     elif isinstance(inputData, tuple[list[str], np.ndarray]):
-        #         self.atomsTuple: tuple[list[str], np.ndarray] = inputData
-        #         self.atoms = self._getAtomsFromTuple(inputData)
-        #     else:
-        #         self.atoms = []
-        #         print("Build requested, but no input data given. Creating empty system.")
-        # else:
-        #     if inputData is not None:
-        #         self.inputData = inputData
-        #         print("Data supplied but atoms not built. Creating empty system.")
-        #     else:
-        #         print("No data supplied. Creating empty system.")
-        #     self.atoms = []
-        #     self.atomsTuple = ([], np.ndarray([]))
         self.atoms      = self._getAtomsFromStrIter(inputData)
-        # self.atomsTuple = self._getNumPyArrays()
         self.molecules = None,
         self.distanceMatrix = None
-        self.neighbors = None
+        self.neighborsPerAtom = None
         self.molecules = None
 
+    def __iter__(self) -> iter:
+        return AtomicSystemIterator(self)
     
     # The following function could be made an alternative __init__ of the Atom calss but I don't know how to do that yet
     def _getAtomsFromStrIter(self, inputData: Iterable[str]) -> list[Atom]:
@@ -69,42 +35,28 @@ class AtomicSystem():
         chemSymbol, x, y, z = atomLine.split()
         return Atom(chemSymbol, x=x, y=y, z=z)
     
-    def _getAtomsFromTuple(self, inputData: tuple[list[str], np.ndarray]) -> list[Atom]:
-
-        if self.atoms is None:
-            self.atoms: list[Atom] = []
-        else:
-            return self.atoms
-        
-        atomSymbols, coordinates = self.inputData
-        xyzPositions: list[list[float]] = coordinates.T.tolist()
-        # nestedLists = [ [x1, y1, z1], ..., [xN, yN, zN] ]
-        atoms = [
-            Atom(
-                chemSymbol  = atomSymbol, 
-                x       = xyz[0], 
-                y       = xyz[1], 
-                z       = xyz[2]) 
-            for atomSymbol, xyz in zip(atomSymbols, xyzPositions)
-            ]
-        return atoms
         
     def buildPairsDistance(self) -> None:
-        # elements, x,y,z = self.getNumpyTuple()
+        def matrixModulo(distanceArray: np.ndarray, atomicSystemSize: float) -> np.ndarray:
+            distanceArray = np.where(distanceArray>(atomicSystemSize/2), atomicSystemSize-distanceArray, distanceArray)
+            return distanceArray
+
+        def getDistanceArray(array: np.ndarray) -> np.ndarray:
+            return abs(array[:, None] - array[None, :])
+
         symbolList, x, y, z = self._getNumPyArrays(getArrays=True)
+        
+        dx = getDistanceArray(x)
+        dx = matrixModulo(dx, self.size)
 
-        dx = abs(x[:, None] - x[None, :])
-        if self.size != None: dx = periodicBoundaryConditions(dx, self.size)
+        dy = getDistanceArray(y)
+        dy = matrixModulo(dy, self.size)
 
-        dy = abs(y[:, None] - y[None, :])
-        if self.size != None: dy = periodicBoundaryConditions(dy, self.size)
+        dz = getDistanceArray(z)
+        dz = matrixModulo(dz, self.size)
 
-        dz = abs(z[:, None] - z[None, :])
-        if self.size != None: dz = periodicBoundaryConditions(dz, self.size)
-
-        DistanceMatrix = (dx**2 + dy**2 + dz**2)**(1/2)
-        # print(DistanceMatrix)
-        self.distanceMatrix = DistanceMatrix
+        self.distanceMatrix = (dx**2 + dy**2 + dz**2)**(1/2)
+        
 
     def buildNeighborsMatrix(self, 
         cutoffRadii:    float   = 1.575, 
@@ -112,11 +64,13 @@ class AtomicSystem():
         ) -> None:
         if self.distanceMatrix is None: self.buildPairsDistance()
     
-        neighborsMatrix = np.where(self.distanceMatrix<cutoffRadii, float(1), float(0))
-        neighborsMatrix[neighborsMatrix==0]=['NaN']
-        # print(self.distanceMatrix)
+        # Mapping close/far atoms to 1/0
+        neighborsMatrix = np.where(self.distanceMatrix < cutoffRadii, float(1), float(0))
+        # Mapping 0 to NaN
+        neighborsMatrix[neighborsMatrix==0] = ['NaN']
+        # Multiplying each col by its index, thus transforming 1 -> index
         neighborsMatrix[:] *= range(len(self.distanceMatrix[0]))
-        if isOneIndexed==True: neighborsMatrix[:] += 1
+        if isOneIndexed == True: neighborsMatrix[:] += 1
         self.neighborsMatrix = neighborsMatrix
 
     def buildNeighbors(self) -> None:
@@ -128,19 +82,19 @@ class AtomicSystem():
             for j in listOfIndex:
                 iNeighbors.append(self.atoms[int(j)])
             neighbors.append(iNeighbors)
-        self.neighbors = {atom: neighbors for atom, neighbors in zip(self.atoms, neighbors)}
+        self.neighborsPerAtom = {atom: neighbors for atom, neighbors in zip(self.atoms, neighbors)}
 
 
     def buildMolecules(self) -> None:
-        if self.neighbors is None: self.buildNeighbors()
+        if self.neighborsPerAtom is None: self.buildNeighbors()
         def parseNeighbors(parsedAtoms:dict, atom:Atom):
             if not parsedAtoms.get(atom, False):
                 parsedAtoms[atom] = True
-                for neighborAtom in self.neighbors[atom]:
+                for neighborAtom in self.neighborsPerAtom[atom]:
                     parseNeighbors(parsedAtoms, neighborAtom)
         totalParsedAtoms = {}
         MolList = []
-        for atom, neighbors in self.neighbors.items():
+        for atom, neighbors in self.neighborsPerAtom.items():
             if not totalParsedAtoms.get(atom, False):
                 parsedAtoms = {}
                 parseNeighbors(parsedAtoms, atom)
@@ -151,29 +105,11 @@ class AtomicSystem():
 
     def getSpeciation(self) -> str:
         if self.molecules is None: self.buildMolecules()
-        speciation = {}
+        moleculesCount = {}
         for molecule in self.molecules:
-            speciation[molecule] = speciation.get(molecule, 0) + 1
-        strSpeciation = str(speciation)
+            moleculesCount[molecule] = moleculesCount.get(molecule, 0) + 1
+        strSpeciation = str(moleculesCount)
         return strSpeciation
-    
-    def placeHolder(self):
-        atomSymbols:    list[str]   = []
-        xCoordinates:   list[float] = []
-        yCoordinates:   list[float] = []
-        zCoordinates:   list[float] = []
-            # chemSymbol, x, y, z = atomXYZline.split()
-            # atomSymbols.append(chemSymbol)
-            # xCoordinates.append(float(x))
-            # yCoordinates.append(float(y))
-            # zCoordinates.append(float(z))
-
-        xArray = np.array(xCoordinates, dtype=float)
-        yArray = np.array(yCoordinates, dtype=float)
-        zArray = np.array(zCoordinates, dtype=float)
-        positionsMatrix = np.ndarray([xArray, yArray, zArray], dtype=float)
-
-        atoms = self._getAtomsFromTuple(zip(atomSymbols, positionsMatrix))
     
     def _getNumPyArrays(self, getArrays=False) -> tuple[list[str], np.ndarray]:
         
@@ -213,36 +149,8 @@ class AtomicSystem():
             Atoms.append(Atom(chemSymbol=symbol[i], x=x[i], y=y[i], z=z[i]))
         self.atoms = Atoms
     
-
-    
-    def _getNumpyTuple(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        def cleanMatrix(array: np.ndarray) -> np.ndarray:
-            array += self.size
-            array = np.where(array>self.size, array%self.size, array)
-            return array
-        
-        elements        = self.data.Element.to_numpy(dtype=str)
-        xCoordinates    = cleanMatrix(self.data.x.to_numpy(dtype=float))
-        yCoordinates    = cleanMatrix(self.data.y.to_numpy(dtype=float))
-        zCoordinates    = cleanMatrix(self.data.z.to_numpy(dtype=float))
-        return elements, xCoordinates, yCoordinates, zCoordinates
-    
-    def __iter__(self) -> iter:
-        return AtomicSystemIterator(self)
-    
-    # def _initDataFromAtoms(self) -> None:
-    #     """
-    #     N x y z
-    #     O x y z
-    #     O x y z
-    #     H x y z
-    #     """
-    #     data = np.ndarray([[ for row in self.atoms] for atom in self.atoms])
-    #     self.data = data
-    
-    
 class AtomicSystemIterator():
-    def __init__(self, atomicSystem):
+    def __init__(self, atomicSystem: AtomicSystem):
         self.atoms = atomicSystem.atoms
         self.index = 0
 

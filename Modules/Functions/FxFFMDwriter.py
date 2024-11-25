@@ -1,1 +1,0 @@
-Init = lammpsFixNVT("NVT", T=298)

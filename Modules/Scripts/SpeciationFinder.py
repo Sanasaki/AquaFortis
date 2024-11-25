@@ -6,19 +6,18 @@ from FileTypes import AtomicCoordinatesXYZfile, CP2Kfile
 
 def writingFile(exportPath: str, speciations, name):
     path = exportPath + f'/{name}-speciation.txt'
-    print(path)
+    print("Writing:", name)
     with open(path, 'w')as outfile:
-        for key, item in dict(sorted(speciations.items())).items():
-            outfile.write(f"{key} {item}\n")
+        # for item in dict(sorted(speciations.items())).items():
+        for i, item in enumerate(speciations):
+            outfile.write(f"{i} {item}\n")
 
 def indirectGetSpeciation(xyzFile):
     currentDirPath = "/".join(xyzFile.split("/")[:-1]) + f"/{xyzFile.split("/")[-1].split(".")[0]}.inp"
     cp2kFile = CP2Kfile(currentDirPath)
-    atomicFile = AtomicCoordinatesXYZfile(xyzFile, toInitialize=True, linkedCP2KFile=cp2kFile)
+    atomicFile = AtomicCoordinatesXYZfile(xyzFile, linkedCP2KFile=cp2kFile)
     print("Reading:", atomicFile.name)
-    # atomicSystem = AtomicSystem(atomicFile.atoms, atomicFile.atomicSystemSize)
-    speciations = atomicFile._trajectorySlicer()
-    return speciations
+    return atomicFile.getTimeSpeciation()
 
 def main(**argv):
     xyzFilesToGetSpeciation = fd.askopenfilenames(title='Select XYZ files', initialdir=r'C:\Users\JL252842\Documents\Thesis\Data\Raw\Simulations\2024-11-22\AIMD-SCAN-AF')
@@ -27,13 +26,10 @@ def main(**argv):
 
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as multiProcess:
         speciationsResults = multiProcess.map(indirectGetSpeciation, xyzFilesToGetSpeciation)
-    # with concurrent.futures.ThreadPoolExecutor(max_workers=12) as multiThread:
         for xyzFilePath, data in zip(xyzFilesToGetSpeciation, speciationsResults):
             name = xyzFilePath.split("/")[-1].split(".")[0]
-            print("Writing:", name)
             writingFile(exportPath, data, name)
     
-
     
 if __name__ == "__main__":
     main()

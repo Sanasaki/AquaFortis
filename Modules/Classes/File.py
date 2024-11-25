@@ -5,11 +5,16 @@ from abc import ABC, abstractmethod
 
 class File(ABC):
     def __init__(self, filePath:str, fileType:str=None) -> None:
-        self.filePath = filePath
-        self.currentDirPath = "/".join(filePath.split("/")[:-1]) + "/"
-        self.name = filePath.split("/")[-1].split(".")[0]
-        self.fileName = filePath.split("/")[-1]
-        self.fileType = self.fileName.split(".")[-1] if fileType is None else fileType
+        self.filePath:          str = filePath
+        self.currentDirPath:    str = "/".join(filePath.split("/")[:-1]) + "/"
+        self.name:              str = filePath.split("/")[-1].split(".")[0]
+        self.fileName:          str = filePath.split("/")[-1]
+        self.fileType:          str = self.fileName.split(".")[-1] if fileType is None else fileType
+        self.fileLength:        int = self.getFileLength()
+    
+    def getFileLength(self):
+        with open(self.filePath, 'r') as f:
+            return len(f.readlines())
 
 class Vector(ABC):
     def __init__(self, **kwargs) -> None:
