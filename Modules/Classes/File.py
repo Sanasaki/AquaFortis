@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 
 
 class File(ABC):
+    __slots__ = ["filePath", "currentDirPath", "name", "fileName", "fileType", "fileLength"]
+
     def __init__(self, filePath:str, fileType:str=None) -> None:
         self.filePath:          str = filePath
         self.currentDirPath:    str = "/".join(filePath.split("/")[:-1]) + "/"
@@ -16,60 +18,60 @@ class File(ABC):
         with open(self.filePath, 'r') as f:
             return len(f.readlines())
 
-class Vector(ABC):
-    def __init__(self, **kwargs) -> None:
-        for key, value in kwargs.items():
-            setattr(self, key, float(value))
-        self.dimension = len(kwargs)
+# class Vector(ABC):
+#     def __init__(self, **kwargs) -> None:
+#         for key, value in kwargs.items():
+#             setattr(self, key, float(value))
+#         self.dimension = len(kwargs)
 
-    def __hash__(self) -> int:
-        return hash(self.dimension)
+#     def __hash__(self) -> int:
+#         return hash(self.dimension)
     
-    def __eq__(self, other):
-        return self.dimension == other.dimension
+#     def __eq__(self, other):
+#         return self.dimension == other.dimension
 
-class Component(ABC):
+# class Component(ABC):
 
-    @property
-    def parent(self) -> Component:
-        return self._parent
+#     @property
+#     def parent(self) -> Component:
+#         return self._parent
     
-    @parent.setter
-    def parent(self, parent: Component) -> None:
-        self._parent = parent 
+#     @parent.setter
+#     def parent(self, parent: Component) -> None:
+#         self._parent = parent 
 
-    @abstractmethod
-    def isComposite(self) -> bool:
-        pass
+#     @abstractmethod
+#     def isComposite(self) -> bool:
+#         pass
 
-class Set(ABC):
-    def __init__(self, count:float) -> None:
-        self.count = count
+# class Set(ABC):
+#     def __init__(self, count:float) -> None:
+#         self.count = count
 
-    @abstractmethod
-    def merge(self, other) -> None:
-        pass
+#     @abstractmethod
+#     def merge(self, other) -> None:
+#         pass
 
-class EquivalentSet(Set):
-    def __init__(self) -> None:
-        super().__init__()
+# class EquivalentSet(Set):
+#     def __init__(self) -> None:
+#         super().__init__()
 
-    def merge(self, other) -> None:
-        self.count += other.count
+#     def merge(self, other) -> None:
+#         self.count += other.count
 
 
-class NonEquivalentSet(Set):
-    def __init__(self, setList:list) -> None:
-        self.setList = setList
-        self.count = len(setList)
+# class NonEquivalentSet(Set):
+#     def __init__(self, setList:list) -> None:
+#         self.setList = setList
+#         self.count = len(setList)
 
-    def __hash__(self) -> int:
-        return hash(tuple(self.setList))
+#     def __hash__(self) -> int:
+#         return hash(tuple(self.setList))
     
-    def __eq__(self, other) -> bool:
-        return self == other
+#     def __eq__(self, other) -> bool:
+#         return self == other
     
-    def merge(self, other) -> None:
-        self.setList += other.setList
-        self.count += other.count
+#     def merge(self, other) -> None:
+#         self.setList += other.setList
+#         self.count += other.count
 

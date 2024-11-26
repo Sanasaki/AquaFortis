@@ -7,6 +7,8 @@ from Classes.Chemistry.Molecule import Molecule
 
 
 class AtomicSystem():
+    __slots__ = ["atoms", "size", "molecules", "distanceMatrix", "neighborsPerAtom", "neighborsMatrix"]
+
     def __init__(
             self,
             inputData: Iterable[str]= None,
@@ -15,7 +17,6 @@ class AtomicSystem():
         
         if size is not None: self.size = size
         self.atoms      = self._getAtomsFromStrIter(inputData)
-        self.molecules = None,
         self.distanceMatrix = None
         self.neighborsPerAtom = None
         self.molecules = None

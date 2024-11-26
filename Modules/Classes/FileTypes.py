@@ -21,6 +21,7 @@ from Classes.File import File
 #             frameFile.writelines(self.sliceOfTxt)
 
 class CP2Kfile(File):
+    __slots__ = ["cp2kSystemSize"]
     def __init__(
             self, 
             filePath: str
@@ -36,6 +37,7 @@ class CP2Kfile(File):
         return f"CP2K file: {self.name}"
 
 class AtomicCoordinatesXYZfile(File):
+    __slots__ = ["atomicSystemSize", "atomNumber", "linesToIgnore", "chunkSize"]
 
     def __init__(
             self, 
