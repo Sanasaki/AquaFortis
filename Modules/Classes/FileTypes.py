@@ -54,23 +54,14 @@ class AtomicCoordinatesXYZfile(File):
         # Start = 2 to skip the first two lines
         self.linesToIgnore: int = 2 
         self.chunkSize:     int = self.atomNumber + self.linesToIgnore
-        
-    def buildTimesteps(self) -> list[AtomicSystem]:
-        frames = []
+  
+    def getTimeSpeciation(self) -> list[str]:       
         start, stop = self.linesToIgnore, self.chunkSize
         with open(self.filePath, 'r') as file:
             for _ in range(0, self.fileLength-self.chunkSize, self.chunkSize):
                 chunk = islice(file, start, stop, 1)
-                frames.append(AtomicSystem(inputData=chunk, size=self.atomicSystemSize))
-        return frames
-    
-    def getTimeSpeciation(self) -> list[str]:
-        def _indirectGet(atomicSystem: AtomicSystem):
-            return atomicSystem.getSpeciation()
-        
-        frames = self.buildTimesteps()
-        with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
-            speciationResults = executor.map(_indirectGet, frames)
+                frame = AtomicSystem(inputData=chunk, size=self.atomicSystemSize)
+                speciationResults = frame.getSpeciation()
         return [result for result in speciationResults]
 
     def getAtomNumber(self):
