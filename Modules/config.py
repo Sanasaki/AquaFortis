@@ -9,4 +9,4 @@ periodicTable: dict = {
     "O" :   {"atomicWeight": 15.999,    "atomicNumber": 8 }
 }
 
-cutOff: float = 1.575
+cutOff: float = 1.58

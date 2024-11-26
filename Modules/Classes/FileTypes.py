@@ -60,10 +60,12 @@ class AtomicCoordinatesXYZfile(File):
     def getTimeSpeciation(self) -> list[str]:       
         start, stop = self.linesToIgnore, self.chunkSize
         with open(self.filePath, 'r') as file:
+            speciationResults = []
             for _ in range(0, self.fileLength-self.chunkSize, self.chunkSize):
                 chunk = islice(file, start, stop, 1)
                 frame = AtomicSystem(inputData=chunk, size=self.atomicSystemSize)
-                speciationResults = frame.getSpeciation()
+                result = frame.getSpeciation()
+                speciationResults.append(result)
         return [result for result in speciationResults]
 
     def getAtomNumber(self):

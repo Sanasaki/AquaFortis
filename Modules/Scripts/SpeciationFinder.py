@@ -7,7 +7,7 @@ from Classes.FileTypes import AtomicCoordinatesXYZfile, CP2Kfile
 def writingFile(exportPath: str, speciations, name):
     path = exportPath + f'/{name}-speciation.txt'
     print("Writing:", name)
-    with open(path, 'w')as outfile:
+    with open(path, 'w') as outfile:
         # for item in dict(sorted(speciations.items())).items():
         for i, item in enumerate(speciations):
             outfile.write(f"{i} {item}\n")
