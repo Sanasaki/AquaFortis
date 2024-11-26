@@ -4,7 +4,7 @@ from operator import countOf
 from time import sleep
 from typing import List
 
-from chemistry.Atom import Atom
+from Classes.Chemistry.Atom import Atom
 from matplotlib import pyplot as plt
 
 # class Element:

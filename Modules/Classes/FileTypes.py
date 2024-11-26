@@ -1,8 +1,8 @@
 import concurrent.futures
 from itertools import islice
 
-from AtomicSystem import AtomicSystem
-from File import File
+from Classes.AtomicSystem import AtomicSystem
+from Classes.File import File
 
 # class CP2K(File):
     # subclass input

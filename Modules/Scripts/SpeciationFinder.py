@@ -1,7 +1,7 @@
 import concurrent.futures
 from tkinter import filedialog as fd
 
-from FileTypes import AtomicCoordinatesXYZfile, CP2Kfile
+from Classes.FileTypes import AtomicCoordinatesXYZfile, CP2Kfile
 
 
 def writingFile(exportPath: str, speciations, name):

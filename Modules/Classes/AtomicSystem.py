@@ -1,9 +1,9 @@
 from typing import Iterable
 
+import config
 import numpy as np
-
-from chemistry.Atom import Atom
-from chemistry.Molecule import Molecule
+from Classes.Chemistry.Atom import Atom
+from Classes.Chemistry.Molecule import Molecule
 
 
 class AtomicSystem():
@@ -59,7 +59,7 @@ class AtomicSystem():
         
 
     def buildNeighborsMatrix(self, 
-        cutoffRadii:    float   = 1.575, 
+        cutoffRadii:    float   = config.cutOff, 
         isOneIndexed:   bool    = False
         ) -> None:
         if self.distanceMatrix is None: self.buildPairsDistance()
