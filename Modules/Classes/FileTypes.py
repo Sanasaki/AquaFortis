@@ -20,6 +20,42 @@ from Classes.File import File
 #         with open(path, "a", newline= '\n') as frameFile:
 #             frameFile.writelines(self.sliceOfTxt)
 
+class SpeciationFile(File):
+    def __init__(
+            self, 
+            filePath: str,
+            speciesPerStep: list[str] = None,
+            ):
+        super().__init__(filePath)
+        if speciesPerStep != None: 
+            self.speciesPerStep = speciesPerStep
+            self.steps = len(speciesPerStep)
+
+    def write(self) -> None:
+        with open(self.filePath, 'w', newline='\n') as file:
+            for step, item in enumerate(self.speciesPerStep):
+                file.write(f"{step} {item}\n")
+    
+    def readlines(self) -> list[str]:
+        with open(self.filePath, 'r') as file:
+            return file.readlines()
+    
+    def plot(self):
+        def getSpecies(speciationLine: str) -> dict[str, int]:
+            # 4 {HNO3: 16, H2O: 76, H3NO4: 4}
+            speciesLine: str = (speciationLine.split('{')[-1]).split('}')[0]
+            moleculeFound = {}
+            for species in speciesLine.split(','):
+                molFoundInLine = {}
+                speciesName, speciesCount = species.strip().split(':')
+                molFoundInLine[str(speciesName)] = int(speciesCount)
+                moleculeFound.update(molFoundInLine)
+            return moleculeFound
+        # timeSpeciation: list[dict[str, int]] = map(getSpecies, self.speciesPerStep)
+        
+        
+        
+
 class CP2Kfile(File):
     __slots__ = ["cp2kSystemSize"]
     def __init__(
