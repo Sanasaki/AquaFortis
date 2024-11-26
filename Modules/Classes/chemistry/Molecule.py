@@ -42,6 +42,8 @@ def _getChemicalFormula(listOfAtoms):
     return f"{''.join([strH, strN, strO])}"
 
 class Molecule:
+    __slots__ = ["_atoms", "chemicalFormula", "_atomsSymbol"]
+
     @property
     def atoms(self):
         return self._atoms

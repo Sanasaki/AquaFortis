@@ -1,4 +1,6 @@
 class Atom():
+    __slots__ = ["chemSymbol", "atomicNumber", "atomicWeight", "x", "y", "z"]
+
     def __init__(self, 
                 chemSymbol: str,
                 atomicNumber: int=None, 
