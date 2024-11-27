@@ -10,3 +10,5 @@ periodicTable: dict = {
 }
 
 cutOff: float = 1.58
+
+pythonOutput: str = r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput"
