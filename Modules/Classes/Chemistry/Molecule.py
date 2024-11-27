@@ -4,11 +4,21 @@ from operator import countOf
 from time import sleep
 from typing import List
 
-from Classes.AtomicSystem import AtomicSystem
 from Classes.Chemistry.Atom import Atom
 from matplotlib import pyplot as plt
 
+# class Element:
+#     def __init__(self, symbol: str, atomicNumber: int=None, atomicWeight: float=None):
+#         self.symbol = symbol
+#         self.atomicNumber = atomicNumber
+#         self.atomicWeight = atomicWeight
 
+#     def __repr__(self):
+#         return f"{self.symbol}"
+
+
+##PROBLEM: lorsque la méthode est mise dans la classe, elle reçoit trop d'argument en l'appelant avec self.methode, même avec le décorateur "@classmethod", peut être qu'il faut juste un autre décorateur genre staticmethod
+# Aussi, elle est archi sale, mais je n'ai pas de temps à perdre encore là dessus, et puis je pense qu'une version plus élégante ressortira d'elle-même quand les objets auront été mieux écrits
 def _getChemicalFormula(listOfAtoms):
     countH = 0
     countN = 0
@@ -79,36 +89,36 @@ class Molecule():
         return sorted([atom.chemSymbol for atom in self.atoms])
        
     
-    # def _checkConflict(self):
-    #     for atom in self.atoms:
-    #         listToInherit=[]
-    #         if atom.molecule == None:
-    #             atom.molecule = self
-    #         if atom.molecule != self:
-    #             for childToInherit in atom.molecule.atoms:
-    #                 listToInherit.append(childToInherit)
-    #     if len(listToInherit)>0:
-    #         for childToActuallyInherit in listToInherit:
-    #             childToActuallyInherit.molecule = self
-    #             if childToActuallyInherit not in self.atoms:
-    #                 self.atoms.append(childToActuallyInherit)
+    def _checkConflict(self):
+        for atom in self.atoms:
+            listToInherit=[]
+            if atom.molecule == None:
+                atom.molecule = self
+            if atom.molecule != self:
+                for childToInherit in atom.molecule.atoms:
+                    listToInherit.append(childToInherit)
+        if len(listToInherit)>0:
+            for childToActuallyInherit in listToInherit:
+                childToActuallyInherit.molecule = self
+                if childToActuallyInherit not in self.atoms:
+                    self.atoms.append(childToActuallyInherit)
     
     # méthode très salement écrite je suppose, mais au moins ça produit les effets attendus
-    # def addAtom(self, atom):
-    #     # self.atoms.append(atom)
-    #     # atom.molecule = self
-    #     if atom.molecule == None:
-    #         # print("No parent:", atom)
-    #         atom.molecule = self
-    #         self.atoms.append(atom)
-    #     elif atom.molecule != self:
-    #         # print(f"{atom} is already part of molecule {atom.molecule}")
-    #         # print(f"current molecule: {self}")
-    #         # oldMolecule = atom.molecule
-    #         # atom.molecule.chemicalFormula = f"Void" #j'ai tenté de lutter contre le garbage collector et j'ai échoué, comme certainement beaucoup d'autres avant moi
-    #         for indirectChild in atom.molecule.atoms:
-    #             indirectChild.molecule = self
-    #             self.atoms.append(indirectChild)
+    def addAtom(self, atom):
+        # self.atoms.append(atom)
+        # atom.molecule = self
+        if atom.molecule == None:
+            # print("No parent:", atom)
+            atom.molecule = self
+            self.atoms.append(atom)
+        elif atom.molecule != self:
+            # print(f"{atom} is already part of molecule {atom.molecule}")
+            # print(f"current molecule: {self}")
+            # oldMolecule = atom.molecule
+            # atom.molecule.chemicalFormula = f"Void" #j'ai tenté de lutter contre le garbage collector et j'ai échoué, comme certainement beaucoup d'autres avant moi
+            for indirectChild in atom.molecule.atoms:
+                indirectChild.molecule = self
+                self.atoms.append(indirectChild)
     
     # def mergeWith(self):
     #     for atom in self.atoms:
