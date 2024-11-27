@@ -1,5 +1,8 @@
-class Atom():
-    # __slots__ = ["chemSymbol", "atomicNumber", "atomicWeight", "x", "y", "z"]
+from Classes.Vector import Vector
+
+
+class Atom(Vector):
+    __slots__ = ["chemSymbol", "atomicNumber", "atomicWeight", "x", "y", "z", "_position"]
 
     def __init__(self, 
                 chemSymbol: str,
@@ -12,10 +15,8 @@ class Atom():
         self.chemSymbol:    str     = chemSymbol
         self.atomicNumber:  int     = atomicNumber
         self.atomicWeight:  float   = atomicWeight
-        self.x:   float = x
-        self.y:   float = y
-        self.z:   float = z
-
+        super().__init__(x, y, z)
+    
     def __repr__(self):
         return f"{self.chemSymbol}"
     

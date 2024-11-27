@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
 
 
@@ -10,8 +11,7 @@ class Speciation:
     {HNO3: 16, H2O: 76, H3NO4: 4}
     """
 
-    molecules:  dict[Molecule, float]   = None
-    # stringLine: str                     = None
+    species:  dict[str, int]= None
     index:      int                     = None
 
     @classmethod
@@ -24,4 +24,11 @@ class Speciation:
             speciesName, speciesCount = species.strip().split(':')
             molFoundInLine[str(speciesName)] = int(speciesCount)
             moleculeFound.update(molFoundInLine)
-        return cls(molecules=moleculeFound)
+        return cls(species=moleculeFound)
+    
+    @classmethod
+    def fromDict(cls, dictLine: dict[Molecule, int]):
+        return cls(species=dictLine)
+        
+    def __repr__(self):
+        return f"{self.species}"

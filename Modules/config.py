@@ -1,4 +1,4 @@
-periodicTable: dict = {
+periodicTable: dict[str, dict[str, float | int]] = {
     "H" :   {"atomicWeight": 1.0080,    "atomicNumber": 1 },
     "He":   {"atomicWeight": 4.00260,   "atomicNumber": 2 },
     "Li":   {"atomicWeight": 7.0,       "atomicNumber": 3 },
@@ -9,6 +9,8 @@ periodicTable: dict = {
     "O" :   {"atomicWeight": 15.999,    "atomicNumber": 8 }
 }
 
-cutOff: float = 1.58
+colorAtom: dict[str, str] = {"H": "green", "N" : "blue", "O": "red"}
+
+cutOff: float = 1.577
 
 pythonOutput: str = r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput"

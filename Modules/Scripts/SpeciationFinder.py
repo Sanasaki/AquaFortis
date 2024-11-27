@@ -2,8 +2,10 @@ import concurrent.futures
 from tkinter import filedialog as fd
 
 from Classes.FileTypes import AtomicCoordinatesXYZfile, CP2Kfile
+from Functions.FxStaticFunctions import FxProcessTime
 
 
+@FxProcessTime
 def writingFile(exportPath: str, speciations, name):
     path = exportPath + f'/{name}-speciation.txt'
     print("Writing:", name)
@@ -12,12 +14,13 @@ def writingFile(exportPath: str, speciations, name):
         for i, item in enumerate(speciations):
             outfile.write(f"{i} {item}\n")
 
+@FxProcessTime
 def indirectGetSpeciation(xyzFile):
     currentDirPath = "/".join(xyzFile.split("/")[:-1]) + f"/{xyzFile.split("/")[-1].split(".")[0]}.inp"
     cp2kFile = CP2Kfile(currentDirPath)
     atomicFile = AtomicCoordinatesXYZfile(xyzFile, linkedCP2KFile=cp2kFile)
     print("Reading:", atomicFile.name)
-    return atomicFile.getTimeSpeciation()
+    return atomicFile.getTimeSpeciation('str')
 
 def main(**argv):
     xyzFilesToGetSpeciation = fd.askopenfilenames(title='Select XYZ files', initialdir=r'C:\Users\JL252842\Documents\Thesis\Data\Raw\Simulations\2024-11-22\AIMD-SCAN-AF')

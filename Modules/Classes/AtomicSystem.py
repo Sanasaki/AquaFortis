@@ -1,13 +1,17 @@
 from typing import Iterable
 
-import config
 import numpy as np
+
+import config
 from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
+from Classes.Speciation import Speciation
 
 
 class AtomicSystem():
     __slots__ = ["atoms", "size", "molecules", "distanceMatrix", "neighborsPerAtom", "neighborsMatrix"]
+
+    cutoffRadii = config.cutOff
 
     def __init__(
             self,
@@ -59,14 +63,13 @@ class AtomicSystem():
         self.distanceMatrix = (dx**2 + dy**2 + dz**2)**(1/2)
         
 
-    def buildNeighborsMatrix(self, 
-        cutoffRadii:    float   = config.cutOff, 
+    def buildNeighborsMatrix(self,
         isOneIndexed:   bool    = False
         ) -> None:
         if self.distanceMatrix is None: self.buildPairsDistance()
     
         # Mapping close/far atoms to 1/0
-        neighborsMatrix = np.where(self.distanceMatrix < cutoffRadii, float(1), float(0))
+        neighborsMatrix = np.where(self.distanceMatrix < AtomicSystem.cutoffRadii, float(1), float(0))
         # Mapping 0 to NaN
         neighborsMatrix[neighborsMatrix==0] = ['NaN']
         # Multiplying each col by its index, thus transforming 1 -> index
@@ -109,8 +112,8 @@ class AtomicSystem():
         moleculesCount = {}
         for molecule in self.molecules:
             moleculesCount[molecule] = moleculesCount.get(molecule, 0) + 1
-        strSpeciation = str(moleculesCount)
-        return strSpeciation
+        speciation = Speciation.fromDict(dictLine=moleculesCount)
+        return speciation
     
     def _getNumPyArrays(self, getArrays=False) -> tuple[list[str], np.ndarray]:
         

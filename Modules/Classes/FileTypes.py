@@ -3,6 +3,7 @@ from itertools import islice
 
 from Classes.AtomicSystem import AtomicSystem
 from Classes.File import File
+from Functions.FxStaticFunctions import FxProcessTime
 
 #test comment
 
@@ -94,8 +95,8 @@ class AtomicCoordinatesXYZfile(File):
         # Start = 2 to skip the first two lines
         self.linesToIgnore: int = 2 
         self.chunkSize:     int = self.atomNumber + self.linesToIgnore
-  
-    def getTimeSpeciation(self) -> list[str]:       
+    
+    def getTimeSpeciation(self, output='str') -> list[str]:       
         start, stop = self.linesToIgnore, self.chunkSize
         with open(self.filePath, 'r') as file:
             speciationResults = []
@@ -104,7 +105,10 @@ class AtomicCoordinatesXYZfile(File):
                 frame = AtomicSystem(inputData=chunk, size=self.atomicSystemSize)
                 result = frame.getSpeciation()
                 speciationResults.append(result)
-        return [result for result in speciationResults]
+        if output == 'str':
+            return [result.__repr__() for result in speciationResults]
+        else:
+            return [result for result in speciationResults]
 
     def getAtomNumber(self):
         with open(self.filePath, 'r') as f:
