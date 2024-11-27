@@ -4,7 +4,6 @@ from operator import countOf
 from time import sleep
 from typing import List
 
-from Classes.AtomicSystem import AtomicSystem
 from Classes.Chemistry.Atom import Atom
 from matplotlib import pyplot as plt
 
@@ -78,49 +77,6 @@ class Molecule():
     def _getAtomSymbols(self) -> list:
         return sorted([atom.chemSymbol for atom in self.atoms])
        
-    
-    # def _checkConflict(self):
-    #     for atom in self.atoms:
-    #         listToInherit=[]
-    #         if atom.molecule == None:
-    #             atom.molecule = self
-    #         if atom.molecule != self:
-    #             for childToInherit in atom.molecule.atoms:
-    #                 listToInherit.append(childToInherit)
-    #     if len(listToInherit)>0:
-    #         for childToActuallyInherit in listToInherit:
-    #             childToActuallyInherit.molecule = self
-    #             if childToActuallyInherit not in self.atoms:
-    #                 self.atoms.append(childToActuallyInherit)
-    
-    # méthode très salement écrite je suppose, mais au moins ça produit les effets attendus
-    # def addAtom(self, atom):
-    #     # self.atoms.append(atom)
-    #     # atom.molecule = self
-    #     if atom.molecule == None:
-    #         # print("No parent:", atom)
-    #         atom.molecule = self
-    #         self.atoms.append(atom)
-    #     elif atom.molecule != self:
-    #         # print(f"{atom} is already part of molecule {atom.molecule}")
-    #         # print(f"current molecule: {self}")
-    #         # oldMolecule = atom.molecule
-    #         # atom.molecule.chemicalFormula = f"Void" #j'ai tenté de lutter contre le garbage collector et j'ai échoué, comme certainement beaucoup d'autres avant moi
-    #         for indirectChild in atom.molecule.atoms:
-    #             indirectChild.molecule = self
-    #             self.atoms.append(indirectChild)
-    
-    # def mergeWith(self):
-    #     for atom in self.atoms:
-    #         if atom.molecule == None:
-    #             atom.molecule = self
-    #             self._atoms.append(atom)
-    #         elif atom.molecule != self:
-    #             oldMolecule = atom._molecule
-    #             for indirectChild in oldMolecule.atoms:
-    #                 indirectChild.molecule = self
-    #                 self._atoms.append(indirectChild)
-    #             oldMolecule = f"Void"
     def plot(self, atomicSystemSize, printPositions=False):
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
@@ -175,3 +131,4 @@ class Molecule():
     #     return f"{self.chemicalFormula}"
     
     
+# Test après reset
