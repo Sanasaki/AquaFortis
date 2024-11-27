@@ -1,23 +1,13 @@
 import time
 from tkinter import filedialog as fd
 
-import config
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+import config
 from Classes.FileTypes import SpeciationFile
 
-
-def getSpecies(speciationLine: str) -> dict[str, int]:
-    # 4 {HNO3: 16, H2O: 76, H3NO4: 4}
-    speciesLine: str = (speciationLine.split('{')[-1]).split('}')[0]
-    moleculeFound = {}
-    for species in speciesLine.split(','):
-        molFoundInLine = {}
-        speciesName, speciesCount = species.strip().split(':')
-        molFoundInLine[str(speciesName)] = int(speciesCount)
-        moleculeFound.update(molFoundInLine)
-    return moleculeFound
 
 def toCodomain(dynamicDict: list[dict[any, int]]) -> dict[any, np.array]:
 
