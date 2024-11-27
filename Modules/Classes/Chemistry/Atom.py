@@ -1,4 +1,7 @@
+from typing import Iterable
+
 from Classes.Vector import Vector
+from Functions.FxStaticFunctions import FxProcessTime
 
 
 class Atom(Vector):
@@ -28,3 +31,12 @@ class Atom(Vector):
 
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()
+    
+    @classmethod
+    def fromStr(cls, atomLine:str) -> "Atom":
+        chemSymbol, x, y, z = atomLine.split()
+        return cls(chemSymbol, x=x, y=y, z=z)
+    
+    @classmethod
+    def fromIterable(cls, atomlist: Iterable[str]) -> list["Atom"]:
+        return [cls.fromStr(atomLine) for atomLine in atomlist]

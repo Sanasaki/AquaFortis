@@ -3,9 +3,9 @@ from tkinter import filedialog as fd
 
 from Classes.FileTypes import AtomicCoordinatesXYZfile, CP2Kfile
 from Functions.FxStaticFunctions import FxProcessTime
+from memory_profiler import profile
 
 
-@FxProcessTime
 def writingFile(exportPath: str, speciations, name):
     path = exportPath + f'/{name}-speciation.txt'
     print("Writing:", name)
@@ -22,6 +22,7 @@ def indirectGetSpeciation(xyzFile):
     print("Reading:", atomicFile.name)
     return atomicFile.getTimeSpeciation('str')
 
+@profile
 def main(**argv):
     xyzFilesToGetSpeciation = fd.askopenfilenames(title='Select XYZ files', initialdir=r'C:\Users\JL252842\Documents\Thesis\Data\Raw\Simulations\2024-11-22\AIMD-SCAN-AF')
 

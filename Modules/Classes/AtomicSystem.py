@@ -1,15 +1,25 @@
+import time
+from re import X
 from typing import Iterable
 
-import numpy as np
-
 import config
+import numpy as np
 from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
 from Classes.Speciation import Speciation
+from Functions.FxStaticFunctions import FxProcessTime
 
 
 class AtomicSystem():
-    __slots__ = ["atoms", "size", "molecules", "distanceMatrix", "neighborsPerAtom", "neighborsMatrix"]
+    __slots__ = [
+        "positions",
+        "atoms", 
+        "size", 
+        "molecules", 
+        "distanceMatrix", 
+        "neighborsPerAtom", 
+        "neighborsMatrix"
+        ]
 
     cutoffRadii = config.cutOff
 
@@ -20,32 +30,45 @@ class AtomicSystem():
             ):
         
         if size is not None: self.size = size
-        self.atoms      = self._getAtomsFromStrIter(inputData)
+        self.atoms      = Atom.fromIterable(inputData)
         self.distanceMatrix = None
         self.neighborsPerAtom = None
         self.molecules = None
 
     def __iter__(self) -> iter:
-        return AtomicSystemIterator(self)
+        return AtomicSystemIterator(self) 
     
-    # The following function could be made an alternative __init__ of the Atom calss but I don't know how to do that yet
-    def _getAtomsFromStrIter(self, inputData: Iterable[str]) -> list[Atom]:
-        atoms = [self._getAtomFromStr(atomXYZline) for atomXYZline in inputData]
-        return atoms
     
-    def _getAtomFromStr(self, atomLine:str) -> Atom:
-        # atomLine format example :
-        # "N 12.8755651 -5.6214523 0.0156299"
-        # print(atomLine)
-        chemSymbol, x, y, z = atomLine.split()
-        return Atom(chemSymbol, x=x, y=y, z=z)
-    
+    def _getNumPyArrays(self, getArrays=False) -> tuple[list[str], np.ndarray]:
         
+        atomSymbols:    list[str]   = []
+        xCoordinates:   list[float] = []
+        yCoordinates:   list[float] = []
+        zCoordinates:   list[float] = []
+
+        for atom in self.atoms:
+            atomSymbols.append(atom.chemSymbol)
+            xCoordinates.append(float(atom.x))
+            yCoordinates.append(float(atom.y))
+            zCoordinates.append(float(atom.z))
+
+        xArray = np.array(xCoordinates, dtype=float)
+        yArray = np.array(yCoordinates, dtype=float)
+        zArray = np.array(zCoordinates, dtype=float)
+
+        if getArrays == True:
+            return (atomSymbols, xArray, yArray, zArray)
+        
+        positionsMatrix = np.ndarray([xArray, yArray, zArray])
+        return (atomSymbols, positionsMatrix)
+    
+    
     def buildPairsDistance(self) -> None:
+        
         def matrixModulo(distanceArray: np.ndarray, atomicSystemSize: float) -> np.ndarray:
             distanceArray = np.where(distanceArray>(atomicSystemSize/2), atomicSystemSize-distanceArray, distanceArray)
             return distanceArray
-
+        
         def getDistanceArray(array: np.ndarray) -> np.ndarray:
             return abs(array[:, None] - array[None, :])
 
@@ -62,7 +85,6 @@ class AtomicSystem():
 
         self.distanceMatrix = (dx**2 + dy**2 + dz**2)**(1/2)
         
-
     def buildNeighborsMatrix(self,
         isOneIndexed:   bool    = False
         ) -> None:
@@ -88,9 +110,9 @@ class AtomicSystem():
             neighbors.append(iNeighbors)
         self.neighborsPerAtom = {atom: neighbors for atom, neighbors in zip(self.atoms, neighbors)}
 
-
     def buildMolecules(self) -> None:
         if self.neighborsPerAtom is None: self.buildNeighbors()
+        
         def parseNeighbors(parsedAtoms:dict, atom:Atom):
             if not parsedAtoms.get(atom, False):
                 parsedAtoms[atom] = True
@@ -98,6 +120,7 @@ class AtomicSystem():
                     parseNeighbors(parsedAtoms, neighborAtom)
         totalParsedAtoms = {}
         MolList = []
+        startTime = time.time()
         for atom, neighbors in self.neighborsPerAtom.items():
             if not totalParsedAtoms.get(atom, False):
                 parsedAtoms = {}
@@ -105,6 +128,7 @@ class AtomicSystem():
                 newMolecule = Molecule(parsedAtoms.keys())
                 totalParsedAtoms.update(parsedAtoms)
                 MolList.append(newMolecule)
+        endTime = time.time()
         self.molecules = MolList
 
     def getSpeciation(self) -> str:
@@ -114,30 +138,6 @@ class AtomicSystem():
             moleculesCount[molecule] = moleculesCount.get(molecule, 0) + 1
         speciation = Speciation.fromDict(dictLine=moleculesCount)
         return speciation
-    
-    def _getNumPyArrays(self, getArrays=False) -> tuple[list[str], np.ndarray]:
-        
-        atomSymbols:    list[str]   = []
-        xCoordinates:   list[float] = []
-        yCoordinates:   list[float] = []
-        zCoordinates:   list[float] = []
-
-        for atom in self.atoms:
-            atomSymbols.append(atom.chemSymbol)
-            xCoordinates.append(float(atom.x))
-            yCoordinates.append(float(atom.y))
-            zCoordinates.append(float(atom.z))
-
-        xArray = np.array(xCoordinates, dtype=float)
-        yArray = np.array(yCoordinates, dtype=float)
-        zArray = np.array(zCoordinates, dtype=float)
-
-        if getArrays == True:
-            return (atomSymbols, xArray, yArray, zArray)
-        
-        positionsMatrix = np.ndarray([xArray, yArray, zArray])
-        return (atomSymbols, positionsMatrix)
-        
     
     def write(self, path) -> None:
         with open(path, "w") as f:
@@ -152,6 +152,21 @@ class AtomicSystem():
         for i in range(len(symbol)):
             Atoms.append(Atom(chemSymbol=symbol[i], x=x[i], y=y[i], z=z[i]))
         self.atoms = Atoms
+
+    # @classmethod
+    # def fromAtomIterable(cls, lineIterable):
+    #     Symbols = []
+    #     Xcoords = []
+    #     Ycoords = []
+    #     Zcoords = []
+    #     for line in lineIterable:
+    #         s, x, y, z = line.split()
+    #         Symbols.append(s)
+    #         Xcoords.append(x)
+    #         Ycoords.append(y)
+    #         Zcoords.append(z)
+        
+    #     self.positions = np.array([Xcoords, Ycoords, Zcoords])
     
 class AtomicSystemIterator():
     def __init__(self, atomicSystem: AtomicSystem):

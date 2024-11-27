@@ -1,8 +1,3 @@
-import re
-import sys
-from operator import countOf
-from time import sleep
-from typing import List
 
 import config
 from Classes.ChemicalFormula import ChemicalFormula
@@ -13,9 +8,9 @@ from matplotlib import pyplot as plt
 class Molecule():
     __slots__ = ["_atoms", "chemicalFormula", "_atomsSymbol"]
 
-    def __init__(self, atoms: List[Atom]=None):
+    def __init__(self, atoms: tuple[Atom]=None):
         if atoms == None:
-            self._atoms = []
+            self._atoms = ()
         else:
             self._atoms = atoms
         self.chemicalFormula = ChemicalFormula(atoms)
@@ -34,14 +29,14 @@ class Molecule():
         return self._atoms
     
     @atoms.setter
-    def atoms(self, listOfAtoms: List[Atom]):
+    def atoms(self, listOfAtoms: tuple[Atom]):
         self._atoms = listOfAtoms
 
-    def _setAtomicSystem(self) -> None:
-        self._atomsSymbol = {atom: atom.chemSymbol for atom in self.atoms}
+    # def _setAtomicSystem(self) -> None:
+    #     self._atomsSymbol = {atom: atom.chemSymbol for atom in self.atoms}
     
-    def _getAtomSymbols(self) -> list:
-        return sorted([atom.chemSymbol for atom in self.atoms])
+    # def _getAtomSymbols(self) -> list[str]:
+    #     return sorted([atom.chemSymbol for atom in self.atoms])
        
     def plot(self, atomicSystemSize, printPositions=False):
         fig = plt.figure()
