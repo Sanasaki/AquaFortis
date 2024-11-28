@@ -1,12 +1,11 @@
 import time
 from tkinter import filedialog as fd
 
+import config
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-import config
-from Classes.FileTypes import SpeciationFile
+from Classes.FileTypes.FileSpeciation import FileSpeciation
 
 
 def toCodomain(dynamicDict: list[dict[any, int]]) -> dict[any, np.array]:
@@ -42,15 +41,12 @@ def main(**argv):
 
     # listOfDict = list(map(getSpecies, speciationSample))
     # speciationSample = r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput/x50N100-3-pos-1-speciation.txt"
-    trajectory = SpeciationFile(filePicked[0])
-    with open(speciationSample, 'r') as f:
-        listOfDict: list[dict[str, int]] = list(map(getSpecies, f))
+    trajectory = FileSpeciation(filePicked[0])
+    listOfDict = trajectory.plot()
     codomains = toCodomain(listOfDict)
     df = pd.DataFrame(codomains, dtype=float)
     df = df[df.iloc[0].sort_values(ascending=False).index]
-    # print(df)
     dfpercent = df.div(df.sum(axis=1), axis=0) * 100
-    print(dfpercent)
     ax = dfpercent.plot.area()
     ax.set_xlim(0, len(listOfDict)-1)
     ax.set_ylim(0, 100)
