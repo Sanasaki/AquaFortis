@@ -5,7 +5,7 @@ from Functions.FxStaticFunctions import FxProcessTime
 
 
 class Atom(Vector):
-    __slots__ = ["chemSymbol", "atomicNumber", "atomicWeight", "x", "y", "z", "_position"]
+    __slots__ = ("chemSymbol", "atomicNumber", "atomicWeight", "x", "y", "z")
 
     def __init__(self, 
                 chemSymbol: str,
@@ -35,7 +35,7 @@ class Atom(Vector):
     @classmethod
     def fromStr(cls, atomLine:str) -> "Atom":
         chemSymbol, x, y, z = atomLine.split()
-        return cls(chemSymbol, x=x, y=y, z=z)
+        return cls(chemSymbol, x=float(x), y=float(y), z=float(z))
     
     @classmethod
     def fromIterable(cls, atomlist: Iterable[str]) -> list["Atom"]:

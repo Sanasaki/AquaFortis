@@ -2,15 +2,20 @@ from Classes.FileTypes.File import File
 
 
 class FileSpeciation(File):
+
+    
     def __init__(
             self, 
             filePath: str,
             speciesPerStep: list[str] = None,
             ):
+        
         super().__init__(filePath)
+
         if speciesPerStep != None: 
             self.speciesPerStep = speciesPerStep
             self.steps = len(speciesPerStep)
+
 
     def write(self) -> None:
         with open(self.filePath, 'w', newline='\n') as file:

@@ -1,4 +1,5 @@
 import time
+import tkinter as tk
 from tkinter import filedialog as fd
 
 import config
@@ -25,22 +26,8 @@ def toCodomain(dynamicDict: list[dict[any, int]]) -> dict[any, np.array]:
     return foundKeys
 
 def main(**argv):
-    filePicked = fd.askopenfilenames(title='Select speciation to analyze', initialdir=config.pythonOutput)
+    filePicked = fd.askopenfilenames(title='Select speciation to analyze', initialdir = config.pythonOutput)
 
-    # stringLineA: str = "1 {HNO3: 16, H2O: 76, H3NO4: 4}"
-    # stringLineB: str = "2 {HNO3: 16, H2O: 76, H3NO4: 4}"
-    # stringLineC: str = "3 {HNO3: 16, H2O: 76, H3NO4: 4}"
-    # stringLineD: str = "114 {HNO3: 16, H2O: 75, H3NO4: 3, NO2: 1, H4O2: 1, HO: 1}"
-    # stringLineE: str = "5 {HNO3: 14, H2O: 74, H3NO4: 6}"
-    # stringLineF: str = "6 {HNO3: 13, H2O: 73, H3NO4: 7}"
-    # stringLineG: str = "7 {HNO3: 11, H2O: 71, H3NO4: 9}"
-    # stringLineH: str= "26 {HNO3: 13, H2O: 71, H3NO4: 7, H4O2: 1}"
-    # stringLineI: str = "9 {HNO3: 9, H2O: 69, H3NO4: 11}"
-    # stringLineJ: str = "114 {HNO3: 16, H2O: 75, H3NO4: 3, NO2: 1, H4O2: 1, HO: 1}"
-    # speciationSample = [stringLineA, stringLineB, stringLineC, stringLineD, stringLineE, stringLineF, stringLineG, stringLineH, stringLineI, stringLineJ]
-
-    # listOfDict = list(map(getSpecies, speciationSample))
-    # speciationSample = r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput/x50N100-3-pos-1-speciation.txt"
     trajectory = FileSpeciation(filePicked[0])
     listOfDict = trajectory.plot()
     codomains = toCodomain(listOfDict)
@@ -52,19 +39,6 @@ def main(**argv):
     ax.set_ylim(0, 100)
     
     plt.show()
-    
-    # domain = np.linspace(0, len(listOfDict), len(listOfDict))
-    # fig, ax = plt.figure()
-    # # for codomain in codomains:
-    # #     ax.plot(domain, codomains[codomain], label=codomain)
-    
-    # percent = codomains / codomains.sum(axis=0).astype(float) * 100
-    # ax.stackplot(domain, percent)
-    # ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    # ax.set_xlabel("Timestep")
-    # ax.set_ylabel("Occurences")
-
-    # plt.show()
 
 if __name__ == "__main__":
     main()

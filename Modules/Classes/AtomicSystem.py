@@ -2,8 +2,9 @@ import time
 from re import X
 from typing import Iterable
 
-import config
 import numpy as np
+
+import config
 from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
 from Classes.Speciation import Speciation
@@ -11,7 +12,7 @@ from Functions.FxStaticFunctions import FxProcessTime
 
 
 class AtomicSystem():
-    __slots__ = [
+    __slots__ = (
         "positions",
         "atoms", 
         "size", 
@@ -19,7 +20,7 @@ class AtomicSystem():
         "distanceMatrix", 
         "neighborsPerAtom", 
         "neighborsMatrix"
-        ]
+        )
 
     cutoffRadii = config.cutOff
 
@@ -40,7 +41,7 @@ class AtomicSystem():
     
     
     def _getNumPyArrays(self, getArrays=False) -> tuple[list[str], np.ndarray]:
-        
+        ## Fusionner la création des arrays et des atomes depuis l'iterable
         atomSymbols:    list[str]   = []
         xCoordinates:   list[float] = []
         yCoordinates:   list[float] = []
@@ -66,7 +67,7 @@ class AtomicSystem():
     def buildPairsDistance(self) -> None:
         
         def matrixModulo(distanceArray: np.ndarray, atomicSystemSize: float) -> np.ndarray:
-            distanceArray = np.where(distanceArray>(atomicSystemSize/2), atomicSystemSize-distanceArray, distanceArray)
+            distanceArray = np.where(distanceArray>(atomicSystemSize/2), atomicSystemSize - distanceArray, distanceArray)
             return distanceArray
         
         def getDistanceArray(array: np.ndarray) -> np.ndarray:
@@ -125,19 +126,23 @@ class AtomicSystem():
             if not totalParsedAtoms.get(atom, False):
                 parsedAtoms = {}
                 parseNeighbors(parsedAtoms, atom)
-                newMolecule = Molecule(parsedAtoms.keys())
+                atomComposingMolecule = []
+                for atom in parsedAtoms.keys():
+                    atomComposingMolecule.append(atom)
+                newMolecule = Molecule(atomComposingMolecule)
+                # newMolecule = Molecule(parsedAtoms.keys())
                 totalParsedAtoms.update(parsedAtoms)
                 MolList.append(newMolecule)
         endTime = time.time()
         self.molecules = MolList
 
-    def getSpeciation(self) -> str:
+    def getSpeciation(self) -> dict[str, list[Molecule]]:
         if self.molecules is None: self.buildMolecules()
-        moleculesCount = {}
+        moleculesDictList = {}
         for molecule in self.molecules:
-            moleculesCount[molecule] = moleculesCount.get(molecule, 0) + 1
-        speciation = Speciation.fromDict(dictLine=moleculesCount)
-        return speciation
+            # faire un dict {molecule.chemicalFormula: list[molecule]}
+            moleculesDictList[molecule.chemicalFormula] = moleculesDictList.get(molecule.chemicalFormula, []) + [molecule]
+        return Speciation.fromDict(dictLine=moleculesDictList)
     
     def write(self, path) -> None:
         with open(path, "w") as f:

@@ -57,7 +57,7 @@ def FxProcessTime(func):
         timeSpent = endTime-startTime
         if timeSpent<0.001:
             print(f"Function {func.__name__} executed in {int(timeSpent*1_000_000)} µs")
-        elif timeSpent<1:
+        elif timeSpent<5:
             print(f"Function {func.__name__} executed in {float(timeSpent*1_000):.2f} ms")
         else:
             h, m = divmod(timeSpent, 3_600)

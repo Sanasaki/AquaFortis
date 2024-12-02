@@ -10,9 +10,9 @@ class Molecule():
 
     def __init__(self, atoms: tuple[Atom]=None):
         if atoms == None:
-            self._atoms = ()
+            self._atoms: tuple[Atom] = ()
         else:
-            self._atoms = atoms
+            self._atoms: tuple[Atom] = atoms
         self.chemicalFormula = ChemicalFormula(atoms)
 
     def __repr__(self):
@@ -28,9 +28,9 @@ class Molecule():
     def atoms(self):
         return self._atoms
     
-    @atoms.setter
-    def atoms(self, listOfAtoms: tuple[Atom]):
-        self._atoms = listOfAtoms
+    # @atoms.setter
+    # def atoms(self, listOfAtoms: tuple[Atom]):
+    #     self._atoms = listOfAtoms
 
     # def _setAtomicSystem(self) -> None:
     #     self._atomsSymbol = {atom: atom.chemSymbol for atom in self.atoms}

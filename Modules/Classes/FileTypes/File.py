@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from Functions.FxStaticFunctions import FxProcessTime
+
 
 class File(ABC):
     __slots__ = ["filePath", "currentDirPath", "name", "fileName", "fileType", "fileLength"]
@@ -12,11 +14,12 @@ class File(ABC):
         self.name:              str = filePath.split("/")[-1].split(".")[0]
         self.fileName:          str = filePath.split("/")[-1]
         self.fileType:          str = self.fileName.split(".")[-1] if fileType is None else fileType
-        self.fileLength:        int = self.getFileLength()
+        self.fileLength:        int = self._getFileLength()
     
-    def getFileLength(self):
-        with open(self.filePath, 'r') as f:
-            return len(f.readlines())
+    @FxProcessTime
+    def _getFileLength(self):
+        with open(self.filePath, 'rb') as f:
+            return sum(1 for line in f)
 
 # class Vector(ABC):
 #     def __init__(self, **kwargs) -> None:
