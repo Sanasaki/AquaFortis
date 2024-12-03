@@ -49,21 +49,21 @@ def main(**argv):
             Trajectory = data[0]
             writeFile(exportPath, data, name)
 
-    xyzFile = selectedXyzFiles[0]
-    currentDirPath = "/".join(xyzFile.split("/")[:-1]) + f"/{xyzFile.split("/")[-1].split(".")[0]}.inp"
-    cp2kFile = FileCP2Kinput(currentDirPath)
-    atomicFile = FileXYZ(xyzFile, linkedCP2KFile=cp2kFile)
+    # xyzFile = selectedXyzFiles[0]
+    # currentDirPath = "/".join(xyzFile.split("/")[:-1]) + f"/{xyzFile.split("/")[-1].split(".")[0]}.inp"
+    # cp2kFile = FileCP2Kinput(currentDirPath)
+    # atomicFile = FileXYZ(xyzFile, linkedCP2KFile=cp2kFile)
     
-    for i in Trajectory.species:
-        if i != "H2O":
-            if i != "HNO3":
-                mol = (Trajectory.species[i])[0]
-                iAtoms = mol.atoms
-                for atom in iAtoms:
-                    print(atom.x, atom.y, atom.z)
-                # mol.plot(18)
-                # print()
-                (Trajectory.species[i])[0].plot(atomicFile.atomicSystemSize)
+    # for i in Trajectory.species:
+    #     if i != "H2O":
+    #         if i != "HNO3":
+    #             mol = (Trajectory.species[i])[0]
+    #             iAtoms = mol.atoms
+    #             for atom in iAtoms:
+    #                 print(atom.x, atom.y, atom.z)
+    #             # mol.plot(18)
+    #             # print()
+    #             (Trajectory.species[i])[0].plot(atomicFile.atomicSystemSize)
 
     
 if __name__ == "__main__":

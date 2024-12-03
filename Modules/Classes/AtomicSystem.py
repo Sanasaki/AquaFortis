@@ -1,27 +1,14 @@
-import time
-from re import X
+from functools import cached_property
 from typing import Iterable
 
-import numpy as np
-
 import config
+import numpy as np
 from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
 from Classes.Speciation import Speciation
-from Functions.FxStaticFunctions import FxProcessTime
 
 
 class AtomicSystem():
-    __slots__ = (
-        "positions",
-        "atoms", 
-        "size", 
-        "molecules", 
-        "distanceMatrix", 
-        "neighborsPerAtom", 
-        "neighborsMatrix"
-        )
-
     cutoffRadii = config.cutOff
 
     def __init__(
@@ -31,16 +18,14 @@ class AtomicSystem():
             ):
         
         if size is not None: self.size = size
-        self.atoms      = Atom.fromIterable(inputData)
-        self.distanceMatrix = None
-        self.neighborsPerAtom = None
-        self.molecules = None
+        self.atoms:             tuple[Atom]             = Atom.fromIterable(inputData)
 
     def __iter__(self) -> iter:
         return AtomicSystemIterator(self) 
     
     
-    def _getNumPyArrays(self, getArrays=False) -> tuple[list[str], np.ndarray]:
+    @cached_property
+    def _numpyArrays(self, getArrays=True) -> tuple[list[str], np.ndarray]:
         ## Fusionner la création des arrays et des atomes depuis l'iterable
         atomSymbols:    list[str]   = []
         xCoordinates:   list[float] = []
@@ -63,8 +48,8 @@ class AtomicSystem():
         positionsMatrix = np.ndarray([xArray, yArray, zArray])
         return (atomSymbols, positionsMatrix)
     
-    
-    def buildPairsDistance(self) -> None:
+    @cached_property
+    def distanceMatrix(self) -> np.ndarray:
         
         def matrixModulo(distanceArray: np.ndarray, atomicSystemSize: float) -> np.ndarray:
             distanceArray = np.where(distanceArray>(atomicSystemSize/2), atomicSystemSize - distanceArray, distanceArray)
@@ -73,7 +58,7 @@ class AtomicSystem():
         def getDistanceArray(array: np.ndarray) -> np.ndarray:
             return abs(array[:, None] - array[None, :])
 
-        symbolList, x, y, z = self._getNumPyArrays(getArrays=True)
+        _, x, y, z = self._numpyArrays
         
         dx = getDistanceArray(x)
         dx = matrixModulo(dx, self.size)
@@ -84,65 +69,57 @@ class AtomicSystem():
         dz = getDistanceArray(z)
         dz = matrixModulo(dz, self.size)
 
-        self.distanceMatrix = (dx**2 + dy**2 + dz**2)**(1/2)
+        return (dx**2 + dy**2 + dz**2)**(1/2)
         
-    def buildNeighborsMatrix(self,
-        isOneIndexed:   bool    = False
-        ) -> None:
-        if self.distanceMatrix is None: self.buildPairsDistance()
+    @cached_property
+    def neighborsMatrix(self, isOneIndexed: bool = False) -> np.ndarray:
     
-        # Mapping close/far atoms to 1/0
         neighborsMatrix = np.where(self.distanceMatrix < AtomicSystem.cutoffRadii, float(1), float(0))
-        # Mapping 0 to NaN
         neighborsMatrix[neighborsMatrix==0] = ['NaN']
         # Multiplying each col by its index, thus transforming 1 -> index
         neighborsMatrix[:] *= range(len(self.distanceMatrix[0]))
         if isOneIndexed == True: neighborsMatrix[:] += 1
-        self.neighborsMatrix = neighborsMatrix
+        
+        return neighborsMatrix
 
-    def buildNeighbors(self) -> None:
-        if self.distanceMatrix is None: self.buildNeighborsMatrix()
-        neighbors = []
+    @cached_property
+    def neighborsPerAtom(self) -> dict[Atom, list[Atom]]:
+        neighbors: list[int] = []
+
         for i in range(len(self.neighborsMatrix)):
             listOfIndex = ((self.neighborsMatrix[i,:])[~np.isnan(self.neighborsMatrix[i,:])]).tolist()
             iNeighbors = []
             for j in listOfIndex:
                 iNeighbors.append(self.atoms[int(j)])
             neighbors.append(iNeighbors)
-        self.neighborsPerAtom = {atom: neighbors for atom, neighbors in zip(self.atoms, neighbors)}
 
-    def buildMolecules(self) -> None:
-        if self.neighborsPerAtom is None: self.buildNeighbors()
+        return {atom: neighbors for atom, neighbors in zip(self.atoms, neighbors)}
+    
+    @cached_property
+    def molecules(self) -> list[Molecule]:
+        molecules = []
         
-        def parseNeighbors(parsedAtoms:dict, atom:Atom):
+        def parseNeighbors(parsedAtoms:dict[Atom, bool], atom:Atom) -> None:
             if not parsedAtoms.get(atom, False):
                 parsedAtoms[atom] = True
                 for neighborAtom in self.neighborsPerAtom[atom]:
                     parseNeighbors(parsedAtoms, neighborAtom)
-        totalParsedAtoms = {}
-        MolList = []
-        startTime = time.time()
-        for atom, neighbors in self.neighborsPerAtom.items():
-            if not totalParsedAtoms.get(atom, False):
-                parsedAtoms = {}
-                parseNeighbors(parsedAtoms, atom)
-                atomComposingMolecule = []
-                for atom in parsedAtoms.keys():
-                    atomComposingMolecule.append(atom)
-                newMolecule = Molecule(atomComposingMolecule)
-                # newMolecule = Molecule(parsedAtoms.keys())
-                totalParsedAtoms.update(parsedAtoms)
-                MolList.append(newMolecule)
-        endTime = time.time()
-        self.molecules = MolList
 
-    def getSpeciation(self) -> dict[str, list[Molecule]]:
-        if self.molecules is None: self.buildMolecules()
-        moleculesDictList = {}
-        for molecule in self.molecules:
-            # faire un dict {molecule.chemicalFormula: list[molecule]}
-            moleculesDictList[molecule.chemicalFormula] = moleculesDictList.get(molecule.chemicalFormula, []) + [molecule]
-        return Speciation.fromDict(dictLine=moleculesDictList)
+        totalParsedAtoms: dict[Atom, bool] = {}
+
+        for atom in self.neighborsPerAtom.keys():
+            if not totalParsedAtoms.get(atom, False):
+                newMoleculeAtoms: dict[Atom, bool] = {}
+                parseNeighbors(newMoleculeAtoms, atom)
+                totalParsedAtoms.update(newMoleculeAtoms)
+                # is this one-liner understandable?
+                molecules.append(Molecule([atom for atom in newMoleculeAtoms.keys()]))
+
+        return molecules
+
+    @cached_property
+    def speciation(self):
+        return Speciation.fromList(self.molecules)
     
     def write(self, path) -> None:
         with open(path, "w") as f:
@@ -157,21 +134,6 @@ class AtomicSystem():
         for i in range(len(symbol)):
             Atoms.append(Atom(chemSymbol=symbol[i], x=x[i], y=y[i], z=z[i]))
         self.atoms = Atoms
-
-    # @classmethod
-    # def fromAtomIterable(cls, lineIterable):
-    #     Symbols = []
-    #     Xcoords = []
-    #     Ycoords = []
-    #     Zcoords = []
-    #     for line in lineIterable:
-    #         s, x, y, z = line.split()
-    #         Symbols.append(s)
-    #         Xcoords.append(x)
-    #         Ycoords.append(y)
-    #         Zcoords.append(z)
-        
-    #     self.positions = np.array([Xcoords, Ycoords, Zcoords])
     
 class AtomicSystemIterator():
     def __init__(self, atomicSystem: AtomicSystem):

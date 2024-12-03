@@ -5,19 +5,23 @@ from Functions.FxStaticFunctions import FxProcessTime
 
 
 class Atom(Vector):
-    __slots__ = ("chemSymbol", "atomicNumber", "atomicWeight", "x", "y", "z")
+    # Atomic number and weight could be future implementations
+    __slots__ = ("chemSymbol", 
+                #  "atomicNumber", 
+                #  "atomicWeight"
+                 )
 
     def __init__(self, 
                 chemSymbol: str,
-                atomicNumber: int=None, 
-                atomicWeight: float=None, 
+                # atomicNumber: int=None, 
+                # atomicWeight: float=None, 
                 x: float=None,
                 y: float=None,
                 z: float=None,
                 ):
         self.chemSymbol:    str     = chemSymbol
-        self.atomicNumber:  int     = atomicNumber
-        self.atomicWeight:  float   = atomicWeight
+        # self.atomicNumber:  int     = atomicNumber
+        # self.atomicWeight:  float   = atomicWeight
         super().__init__(x, y, z)
     
     def __repr__(self):

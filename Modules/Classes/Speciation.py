@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from random import sample
 
-from Classes.Chemistry.Atom import Atom
+from Classes.ChemicalFormula import ChemicalFormula
 from Classes.Chemistry.Molecule import Molecule
 
 
@@ -12,7 +11,7 @@ class Speciation:
     {HNO3: 16, H2O: 76, H3NO4: 4}
     """
 
-    species:  dict[str, list[Molecule]] = None
+    species:  dict[ChemicalFormula, list[Molecule]] = None
     index:      int                     = None
 
     @classmethod
@@ -30,6 +29,13 @@ class Speciation:
     @classmethod
     def fromDict(cls, dictLine: dict[str, list[Molecule]]):
         return cls(species=dictLine)
+    
+    @classmethod
+    def fromList(cls, listLine: list[Molecule]):
+        moleculesDictList = {}
+        for molecule in listLine:
+            moleculesDictList[molecule.chemicalFormula] = moleculesDictList.get(molecule.chemicalFormula, []) + [molecule]
+        return cls(species=moleculesDictList)
         
     def __repr__(self):
         # printValue = " "
@@ -37,20 +43,3 @@ class Speciation:
         #     printValue += (f"{keys}: {len(values)} ")
             
         return f"{self.species}"
-    
-
-hydrogen = Atom("H", x=1, y=2, z=3)
-oxygen = Atom("O", x=4, y=5, z=6)
-nitrogen = Atom("N", x=7, y=8, z=9)
-
-nitric = Molecule([hydrogen, nitrogen, oxygen, oxygen, oxygen])
-water = Molecule([hydrogen, oxygen, hydrogen])
-
-sampleDict = {nitric.chemicalFormula: [nitric], water.chemicalFormula: [water]}
-
-TestSpeciation = Speciation.fromDict(sampleDict)
-
-print(TestSpeciation)
-# for i in TestSpeciation.species:
-#     print(i, (TestSpeciation.species[i])[0].atoms)
-#     (TestSpeciation.species[i])[0].plot(18)
