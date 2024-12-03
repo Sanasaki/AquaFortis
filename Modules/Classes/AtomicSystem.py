@@ -1,8 +1,10 @@
 from functools import cached_property
 from typing import Iterable
 
-import config
 import numpy as np
+from matplotlib import pyplot as plt
+
+import config
 from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
 from Classes.Speciation import Speciation
@@ -18,13 +20,31 @@ class AtomicSystem():
             ):
         
         if size is not None: self.size = size
-        self.atoms:             tuple[Atom]             = Atom.fromIterable(inputData)
+        self.atoms: tuple[Atom] = Atom.fromIterable(inputData)
 
-    def __iter__(self) -> iter:
-        return AtomicSystemIterator(self)
+    # def __iter__(self) -> iter:
+    #     return AtomicSystemIterator(self)
 
     def __repr__(self) -> str:
-        return f"AtomicSystem with {len(self.atoms)} atoms" 
+        return f"Frame with {len(self.atoms)} atoms" 
+    
+    def plot(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        ax.set_xlim([0, Molecule.atomicSystemSize])
+        ax.set_ylim([0, Molecule.atomicSystemSize])
+        ax.set_zlim([0, Molecule.atomicSystemSize])
+        
+        colorList = [config.colorAtom[atom.chemSymbol] for atom in self.atoms]
+        x = [atom.x + Molecule.atomicSystemSize/2 for atom in self.atoms]
+        y = [atom.y + Molecule.atomicSystemSize/2 for atom in self.atoms]
+        z = [atom.z + Molecule.atomicSystemSize/2 for atom in self.atoms]
+        ax.scatter3D(x,y,z, c=colorList, s=100)
+        plt.show()
+    
+    # @property
+    # def children(self):
+    #     return self.molecules
     
     
     @cached_property

@@ -16,7 +16,6 @@ class File(ABC):
         self.fileType:          str = self.fileName.split(".")[-1] if fileType is None else fileType
         self.fileLength:        int = self._getFileLength()
     
-    @FxProcessTime
     def _getFileLength(self):
         with open(self.filePath, 'rb') as f:
             return sum(1 for line in f)

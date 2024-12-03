@@ -1,11 +1,13 @@
 
+from matplotlib import pyplot as plt
+
 import config
 from Classes.ChemicalFormula import ChemicalFormula
 from Classes.Chemistry.Atom import Atom
-from matplotlib import pyplot as plt
 
 
 class Molecule():
+    atomicSystemSize: float = 30
     __slots__ = ["_atoms", "chemicalFormula", "_atomsSymbol"]
 
     def __init__(self, atoms: tuple[Atom]=None):
@@ -24,6 +26,9 @@ class Molecule():
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()
     
+    # def plot(self):
+    #     return self
+    
     @property
     def atoms(self):
         return self._atoms
@@ -38,17 +43,17 @@ class Molecule():
     # def _getAtomSymbols(self) -> list[str]:
     #     return sorted([atom.chemSymbol for atom in self.atoms])
        
-    def plot(self, atomicSystemSize, printPositions=False):
+    def plot(self, printPositions=False):
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
-        ax.set_xlim([0, atomicSystemSize])
-        ax.set_ylim([0, atomicSystemSize])
-        ax.set_zlim([0, atomicSystemSize])
+        ax.set_xlim([0, Molecule.atomicSystemSize])
+        ax.set_ylim([0, Molecule.atomicSystemSize])
+        ax.set_zlim([0, Molecule.atomicSystemSize])
         
         colorList = [config.colorAtom[atom.chemSymbol] for atom in self.atoms]
-        x = [atom.x for atom in self.atoms]
-        y = [atom.y for atom in self.atoms]
-        z = [atom.z for atom in self.atoms]
+        x = [atom.x + Molecule.atomicSystemSize/2 for atom in self.atoms]
+        y = [atom.y + Molecule.atomicSystemSize/2 for atom in self.atoms]
+        z = [atom.z + Molecule.atomicSystemSize/2 for atom in self.atoms]
         if printPositions==True:
             print(f"{self}")
             for atom in self.atoms:

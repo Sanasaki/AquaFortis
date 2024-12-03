@@ -7,8 +7,11 @@ class Trajectory():
     timestep:       float   = 0.5
     framesPerPs:    int     = int(1000 / timestep)
 
-    def __init__(self, frames: list[AtomicSystem]):
+    def __init__(self, frames: list[AtomicSystem]=None):
         self.frames = frames
+
+    def __repr__(self):
+        return f"Trajectory with {len(self.frames)} frames"
 
     @property
     def dynamicSpeciation(self) -> list[Speciation]:
@@ -18,6 +21,12 @@ class Trajectory():
     def duration(self) -> float:
         return len(self.frames) * self.timestep
     
+    @property
+    def children(self):
+        return self.frames
+    
+    def plot(self):
+        return self
     # def __iter__(self, start=0, end=None):
     #     i = start
     #     if end is None: end = self.length
