@@ -1,10 +1,11 @@
 import concurrent.futures
 from tkinter import filedialog as fd
 
+from memory_profiler import profile
+
 from Classes.FileTypes.CP2K import FileCP2Kinput
 from Classes.FileTypes.FileXYZ import FileXYZ
 from Functions.FxStaticFunctions import FxProcessTime
-from memory_profiler import profile
 
 
 def writeFile(exportPath: str, speciations, name):

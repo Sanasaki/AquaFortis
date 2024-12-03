@@ -64,26 +64,26 @@ It’s only in loops that the microseconds start to add up to minutes.
 class Frame(AtomicSystem):
     pass
 
-# class Trajectory():
-#     timestep:       float   = 0.5
-#     framesPerPs:    int     = int(1000 / timestep)
+class Trajectory():
+    timestep:       float   = 0.5
+    framesPerPs:    int     = int(1000 / timestep)
 
-#     __slots__ = ("_frames", "time")
-#     def __init__(self) -> None:
-#         self._frames = []
-#         pass
+    __slots__ = ("_frames", "time")
+    def __init__(self) -> None:
+        self._frames = []
+        pass
 
-#     def buildSubSet(self):
-#         self.frames = []
-#         pass
+    def buildSubSet(self):
+        self.frames = []
+        pass
 
-#     @property
-#     def time(self):
-#         return self._frames
+    @property
+    def time(self):
+        return self._frames
     
-#     @property
-#     def frames(self):
-#         return self._frames
+    @property
+    def frames(self):
+        return self._frames
 
 class FileTrajectory(File):
     timestep:       float   = 0.5

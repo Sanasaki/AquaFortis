@@ -28,13 +28,9 @@ class FileXYZ(File):
         # Start = 2 to skip the first two lines
         self.linesToIgnore: int = 2
         self.chunkSize:     int = self.atomNumber + self.linesToIgnore
-        
-    def getTimeSpeciation(self, picosecondStart=0, picosecondEnd=0) -> list[str]:
-        # future implementation to select a range and not whole trajectory
-        # theFrameStartsAt = self.getPicosecond(picosecondStart)
-        # theFrameEndsAt = self.getPicosecond(picosecondEnd)
-        # print(theFrameStartsAt, theFrameEndsAt)
 
+    @property        
+    def frames(self):
         start, stop = self.linesToIgnore, self.chunkSize
         with open(self.filePath, 'r') as file:
             speciationResults: list[Speciation] = []
@@ -46,7 +42,18 @@ class FileXYZ(File):
                 # Alors j'ai laissé tel quel
 
                 chunk = islice(file, start, stop, 1)
-                frame = AtomicSystem(inputData=chunk, size=self.atomicSystemSize)
+                yield AtomicSystem(inputData=chunk, size=self.atomicSystemSize)
+    
+    def getTimeSpeciation(self, picosecondStart=0, picosecondEnd=0) -> list[str]:
+        # future implementation to select a range and not whole trajectory
+        # theFrameStartsAt = self.getPicosecond(picosecondStart)
+        # theFrameEndsAt = self.getPicosecond(picosecondEnd)
+        # print(theFrameStartsAt, theFrameEndsAt)
+
+        start, stop = self.linesToIgnore, self.chunkSize
+        with open(self.filePath, 'r') as file:
+            speciationResults: list[Speciation] = []
+            for frame in self.frames:
                 speciationResults.append(frame.speciation)
         return [speciation for speciation in speciationResults]
         
