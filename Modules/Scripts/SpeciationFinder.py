@@ -1,11 +1,10 @@
 import concurrent.futures
 from tkinter import filedialog as fd
 
-from memory_profiler import profile
-
 from Classes.FileTypes.CP2K import FileCP2Kinput
-from Classes.FileTypes.FileXYZ import FileXYZ
+from Classes.FileTypes.FileXYZ import FileTrajectory
 from Functions.FxStaticFunctions import FxProcessTime
+from memory_profiler import profile
 
 
 def writeFile(exportPath: str, speciations, name):
@@ -32,9 +31,10 @@ def writeFile(exportPath: str, speciations, name):
 def indirectMethod(xyzFile):
     currentDirPath = "/".join(xyzFile.split("/")[:-1]) + f"/{xyzFile.split("/")[-1].split(".")[0]}.inp"
     cp2kFile = FileCP2Kinput(currentDirPath)
-    atomicFile = FileXYZ(xyzFile, linkedCP2KFile=cp2kFile)
+    atomicFile = FileTrajectory(xyzFile, linkedCP2KFile=cp2kFile)
     print("Reading:", atomicFile.name)
-    return atomicFile.getTimeSpeciation()
+    # trj = atomicFile.buildTrajectory()
+    return atomicFile.trajectory.dynamicSpeciation
 
 @profile
 def main(**argv):
