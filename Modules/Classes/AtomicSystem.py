@@ -21,7 +21,10 @@ class AtomicSystem():
         self.atoms:             tuple[Atom]             = Atom.fromIterable(inputData)
 
     def __iter__(self) -> iter:
-        return AtomicSystemIterator(self) 
+        return AtomicSystemIterator(self)
+
+    def __repr__(self) -> str:
+        return f"AtomicSystem with {len(self.atoms)} atoms" 
     
     
     @cached_property

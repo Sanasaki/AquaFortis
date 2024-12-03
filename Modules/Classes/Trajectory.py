@@ -2,6 +2,35 @@
 from Classes.AtomicSystem import AtomicSystem
 from Classes.Speciation import Speciation
 
+
+class Trajectory():
+    timestep:       float   = 0.5
+    framesPerPs:    int     = int(1000 / timestep)
+
+    def __init__(self, frames: list[AtomicSystem]):
+        self.frames = frames
+
+    @property
+    def dynamicSpeciation(self) -> list[Speciation]:
+        return [frame.speciation for frame in self.frames]
+    
+    @property
+    def duration(self) -> float:
+        return len(self.frames) * self.timestep
+    
+    # def __iter__(self, start=0, end=None):
+    #     i = start
+    #     if end is None: end = self.length
+    #     while i < end:
+    #         try:
+    #             yield self.frames[i]
+    #             i += 1
+    #         except IndexError:
+    #             raise StopIteration
+    
+
+
+
 # class AtomicSystem(ABC):
 #     __slots__ = ("atoms", "_superSet")
     
@@ -111,53 +140,7 @@ from Classes.Speciation import Speciation
     # @FxProcessTime
 
     # pass
-# class FileTrajectory(File):
-#     # __slots__ = ("trajectory")
-
-#     def __init__(
-#             self, 
-#             filePath: str, 
-#             atomicSystemSize: float = None, 
-#             # atomNumber: int = None,
-#             linkedCP2KFile: FileCP2Kinput = None, 
-#             ):
         
-#         super().__init__(filePath)
-
-#         self.linesToIgnore: int = 2
-#         self.chunkSize:     int = self.atomNumber + self.linesToIgnore
-#         if linkedCP2KFile   is not None: self.atomicSystemSize = linkedCP2KFile.cp2kSystemSize
-#         if atomicSystemSize is not None: self.atomicSystemSize = atomicSystemSize
-#         # self.atomNumber:    int = self.getAtomNumber() if atomNumber is None else atomNumber
-       
-#     def yieldTrajectory(self):
-#         # Coder une factory DP pour créer une liste d'atome qui sera donnée telle qu'elle à la classe AtomicSystem
-#         # J'ai essayé, mais je ne suis pas sûr que ç'ait vraiment simplifier quoi que ce soit
-#         # Alors j'ai laissé tel quel
-        
-#         start, stop = self.linesToIgnore, self.chunkSize
-#         with open(self.filePath, 'r') as file:
-#             speciationResults: list[Speciation] = []
-#             for _ in range(0, self.fileLength-self.chunkSize, self.chunkSize):
-#                 chunk = islice(file, start, stop, 1)
-#                 yield AtomicSystem(inputData=chunk, size=self.atomicSystemSize)
-
-#     def buildTrajectory(self):
-#         return Trajectory(list(self.yieldTrajectory()))
-    
-#     @cached_property
-#     def atomNumber(self):
-#         with open(self.filePath, 'r') as f:
-#             return int(f.readline())
-        
-class Trajectory():
-    def __init__(self, frames: list[AtomicSystem]):
-        self.frames = frames
-
-    @property
-    def dynamicSpeciation(self, picosecondStart=0, picosecondEnd=0) -> list[Speciation]:
-        # future implementation to select a range and not whole trajectory
-        return [frame.speciation for frame in self.frames]
 
 
     # timestep:       float   = 0.5

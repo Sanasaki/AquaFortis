@@ -4,6 +4,7 @@ from tkinter import filedialog as fd
 from Classes.FileTypes.CP2K import FileCP2Kinput
 from Classes.FileTypes.FileXYZ import FileTrajectory
 from Functions.FxStaticFunctions import FxProcessTime
+from matplotlib.pylab import f
 from memory_profiler import profile
 
 
@@ -34,7 +35,8 @@ def indirectMethod(xyzFile):
     atomicFile = FileTrajectory(xyzFile, linkedCP2KFile=cp2kFile)
     print("Reading:", atomicFile.name)
     # trj = atomicFile.buildTrajectory()
-    return atomicFile.trajectory.dynamicSpeciation
+    # return atomicFile.trajectory.dynamicSpeciation
+    return atomicFile.trajectory
 
 @profile
 def main(**argv):
@@ -42,13 +44,21 @@ def main(**argv):
 
     exportPath: str = fd.askdirectory(title='Select export directory', initialdir=r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput")
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=12) as multiProcess:
-        dynamicSpeciations = multiProcess.map(indirectMethod, selectedXyzFiles)
+    dynamicSpeciations = indirectMethod(selectedXyzFiles[0])
+    # with concurrent.futures.ProcessPoolExecutor(max_workers=12) as multiProcess:
+        # dynamicSpeciations = multiProcess.map(indirectMethod, selectedXyzFiles)
     # dynamicSpeciations = map(indirectMethod, selectedXyzFiles)
-        for xyzFilePath, data in zip(selectedXyzFiles, dynamicSpeciations):
-            name = xyzFilePath.split("/")[-1].split(".")[0]
-            Trajectory = data[0]
-            writeFile(exportPath, data, name)
+    # someFrame = dynamicSpeciations.frames[0]
+    # print(type(someFrame), someFrame)
+    for frame in dynamicSpeciations.frames[20:30]:
+        print(frame)
+    
+
+        # for xyzFilePath, data in zip(selectedXyzFiles, dynamicSpeciations):
+        #     print(data.frames)
+            # name = xyzFilePath.split("/")[-1].split(".")[0]
+            # Trajectory = data[0]
+            # writeFile(exportPath, data, name)
 
     # xyzFile = selectedXyzFiles[0]
     # currentDirPath = "/".join(xyzFile.split("/")[:-1]) + f"/{xyzFile.split("/")[-1].split(".")[0]}.inp"
