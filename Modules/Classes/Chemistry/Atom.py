@@ -41,6 +41,4 @@ class Atom(Vector):
         chemSymbol, x, y, z = atomLine.split()
         return cls(chemSymbol, x=float(x), y=float(y), z=float(z))
     
-    @classmethod
-    def fromIterable(cls, atomlist: Iterable[str]) -> list["Atom"]:
-        return [cls.fromStr(atomLine) for atomLine in atomlist]
+    

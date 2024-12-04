@@ -22,6 +22,17 @@
                     "MTS": 2
                 }
             }
+        },
+        "PRINT": {
+            "TRAJECTORY": {
+                "FILENAME": "filename"
+            },
+            "STRESS": {
+                "FILENAME": "stress",
+                "EACH": {
+                    "MOLECULAR_DYNAMICS": 200
+                }
+            }
         }
     },
     "FORCE_EVAL": {

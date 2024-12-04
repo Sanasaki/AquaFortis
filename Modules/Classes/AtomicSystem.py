@@ -1,13 +1,12 @@
 from functools import cached_property
 from typing import Iterable
 
-import numpy as np
-from matplotlib import pyplot as plt
-
 import config
+import numpy as np
 from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
 from Classes.Speciation import Speciation
+from matplotlib import pyplot as plt
 
 
 class AtomicSystem():
@@ -20,42 +19,21 @@ class AtomicSystem():
             ):
         
         if size is not None: self.size = size
-        self.atoms: tuple[Atom] = Atom.fromIterable(inputData)
+        self._numpyArrays = None
+        self.atoms: list[Atom] = self.fromIterable(inputData)
 
-    # def __iter__(self) -> iter:
-    #     return AtomicSystemIterator(self)
+    
 
-    def __repr__(self) -> str:
-        return f"Frame with {len(self.atoms)} atoms" 
-    
-    def plot(self):
-        fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
-        ax.set_xlim([0, Molecule.atomicSystemSize])
-        ax.set_ylim([0, Molecule.atomicSystemSize])
-        ax.set_zlim([0, Molecule.atomicSystemSize])
-        
-        colorList = [config.colorAtom[atom.chemSymbol] for atom in self.atoms]
-        x = [atom.x + Molecule.atomicSystemSize/2 for atom in self.atoms]
-        y = [atom.y + Molecule.atomicSystemSize/2 for atom in self.atoms]
-        z = [atom.z + Molecule.atomicSystemSize/2 for atom in self.atoms]
-        ax.scatter3D(x,y,z, c=colorList, s=100)
-        plt.show()
-    
-    # @property
-    # def children(self):
-    #     return self.molecules
-    
-    
-    @cached_property
-    def _numpyArrays(self, getArrays=True) -> tuple[list[str], np.ndarray]:
-        ## Fusionner la création des arrays et des atomes depuis l'iterable
+    def fromIterable(self, atomlist: Iterable[str]) -> list["Atom"]:
+        atoms:          list[Atom] = []
         atomSymbols:    list[str]   = []
         xCoordinates:   list[float] = []
         yCoordinates:   list[float] = []
         zCoordinates:   list[float] = []
 
-        for atom in self.atoms:
+        for atomLine in atomlist:
+            atom = Atom.fromStr(atomLine)
+            atoms.append(atom)
             atomSymbols.append(atom.chemSymbol)
             xCoordinates.append(float(atom.x))
             yCoordinates.append(float(atom.y))
@@ -64,12 +42,8 @@ class AtomicSystem():
         xArray = np.array(xCoordinates, dtype=float)
         yArray = np.array(yCoordinates, dtype=float)
         zArray = np.array(zCoordinates, dtype=float)
-
-        if getArrays == True:
-            return (atomSymbols, xArray, yArray, zArray)
-        
-        positionsMatrix = np.ndarray([xArray, yArray, zArray])
-        return (atomSymbols, positionsMatrix)
+        self._numpyArrays = (atomSymbols, xArray, yArray, zArray)
+        return atoms
     
     @cached_property
     def distanceMatrix(self) -> np.ndarray:
@@ -107,6 +81,10 @@ class AtomicSystem():
 
     @cached_property
     def neighborsPerAtom(self) -> dict[Atom, list[Atom]]:
+        #Zip function is very slow, so it should be replaced with a dict update here
+        # neighbors = {}
+        # this atom neighbor = {i : self.atoms[int(j)]}
+        # neighbors.update(this atom neighbor)
         neighbors: list[int] = []
 
         for i in range(len(self.neighborsMatrix)):
@@ -150,14 +128,29 @@ class AtomicSystem():
             f.write(f"# system size (angstrom) =\t{float(self.size):.10f}\n")
             f.writelines(f"{atom.symbol}\t{float(atom.x):.10f}\t{float(atom.y):.10f}\t{float(atom.z):.10f}\n" for atom in self.__iter__())
     
+    def __iter__(self) -> Atom:
+        return AtomicSystemIterator(self)
+
+    def __repr__(self) -> str:
+        return f"Frame with {len(self.atoms)} atoms" 
     
-    def buildAtoms(self) -> None:
-        Atoms: list[Atom] = []
-        symbol, x,y,z = self.getNumpyTuple()
-        for i in range(len(symbol)):
-            Atoms.append(Atom(chemSymbol=symbol[i], x=x[i], y=y[i], z=z[i]))
-        self.atoms = Atoms
+    def plot(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        ax.set_xlim([0, Molecule.atomicSystemSize])
+        ax.set_ylim([0, Molecule.atomicSystemSize])
+        ax.set_zlim([0, Molecule.atomicSystemSize])
+        
+        colorList = [config.colorAtom[atom.chemSymbol] for atom in self.atoms]
+        x = [atom.x + Molecule.atomicSystemSize/2 for atom in self.atoms]
+        y = [atom.y + Molecule.atomicSystemSize/2 for atom in self.atoms]
+        z = [atom.z + Molecule.atomicSystemSize/2 for atom in self.atoms]
+        ax.scatter3D(x,y,z, c=colorList, s=100)
+        plt.show()
     
+    # @property
+    # def children(self):
+    #     return self.molecules
 class AtomicSystemIterator():
     def __init__(self, atomicSystem: AtomicSystem):
         self.atoms = atomicSystem.atoms
