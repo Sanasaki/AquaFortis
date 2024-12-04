@@ -1,0 +1,77 @@
+{
+    "GLOBAL": {
+        "PROJECT": "",
+        "RUN_TYPE": "MOLECULAR_DYNAMICS",
+        "PRINT_LEVEL": "LOW"
+    },
+    "EXT_RESTART": {
+        "RESTART_FILE_NAME": ""
+    },
+    "MOTION": {
+        "MOLECULAR_DYNAMICS": {
+            "ENSEMBLE": "NVT",
+            "TEMPERATURE": 298.0,
+            "STEPS": 50000,
+            "MAX_STEPS": 50000,
+            "TIMESTEP": 0.5,
+            "THERMOSTAT": {
+                "NOSE": {
+                    "LENGTH": 3,
+                    "TIMECON": 100,
+                    "YOSHIDA": 3,
+                    "MTS": 2
+                }
+            }
+        }
+    },
+    "FORCE_EVAL": {
+        "METHOD": "QS",
+        "DFT": {
+            "BASIS_SET_FILE_NAME": "BASIS_MOLOPT",
+            "POTENTIAL_FILE_NAME": "scanXcPotential.txt",
+            "MGRID": {
+                "NGRIDS": 5,
+                "CUTOFF": 400
+            },
+            "QS": {
+                "EPS_DEFAULT": 1e-12,
+                "EXTRAPOLATION": "ASPC",
+                "EXTRAPOLATION_ORDER": 2
+            },
+            "SCF": {
+                "SCF_GUESS": "ATOMIC"
+            },
+            "XC": {
+                "XC_FUNCTIONAL": {
+                    "MGGA_X_SCAN": {}
+                },
+                "XC_GRID": {
+                    "XC_SMOOTH_RHO": "NN10",
+                    "XC_DERIV": "SPLINE2_SMOOTH"
+                }
+            }
+        },
+        "SUBSYS": {
+            "CELL": {
+                "ABC": [
+                    10,
+                    10,
+                    10
+                ]
+            },
+            "COORD": {},
+            "KIND H": {
+                "BASIS_SET": "DZVP-MOLOPT-SR-GTH",
+                "POTENTIAL": "GTH-SCAN-q1"
+            },
+            "KIND N": {
+                "BASIS_SET": "DZVP-MOLOPT-SR-GTH",
+                "POTENTIAL": "GTH-SCAN-q5"
+            },
+            "KIND O": {
+                "BASIS_SET": "DZVP-MOLOPT-SR-GTH",
+                "POTENTIAL": "GTH-SCAN-q6"
+            }
+        }
+    }
+}

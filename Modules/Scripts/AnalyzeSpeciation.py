@@ -1,12 +1,13 @@
-import time
-import tkinter as tk
 from tkinter import filedialog as fd
 
 import config
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from Classes.FileTypes.CP2K import FileCP2Kinput
 from Classes.FileTypes.FileSpeciation import FileSpeciation
+from Classes.FileTypes.FileXYZ import FileTrajectory
+from Classes.InteractiveSpeciation import InteractiveSpeciation
 
 
 def toCodomain(dynamicDict: list[dict[any, int]]) -> dict[any, np.array]:
@@ -39,6 +40,16 @@ def main(**argv):
     ax.set_ylim(0, 100)
     
     plt.show()
+
+    selectedFiles = fd.askopenfilenames(title='Select XYZ files', initialdir=r'C:\Users\JL252842\Documents\Thesis\Data\Raw\Simulations\2024-11-22\AIMD-SCAN-AF')
+    files=[]
+    for xyzFile in selectedFiles:
+        currentDirPath = "/".join(xyzFile.split("/")[:-1]) + f"/{xyzFile.split("/")[-1].split(".")[0]}.inp"
+        cp2kFile = FileCP2Kinput(currentDirPath)
+        trjFile = FileTrajectory(xyzFile, linkedCP2KFile=cp2kFile)
+        files.append(trjFile.trajectory)
+    
+    app = InteractiveSpeciation(files)
 
 if __name__ == "__main__":
     main()
