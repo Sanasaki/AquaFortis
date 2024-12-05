@@ -1,12 +1,10 @@
-from typing import Iterable
 
 from Classes.Vector import Vector
-from Functions.FxStaticFunctions import FxProcessTime
 
 
 class Atom(Vector):
     # Atomic number and weight could be future implementations
-    __slots__ = ("chemSymbol", 
+    __slots__ = ("chemSymbol",
                 #  "atomicNumber", 
                 #  "atomicWeight"
                  )
@@ -19,10 +17,10 @@ class Atom(Vector):
                 y: float=None,
                 z: float=None,
                 ):
+        super().__init__(x, y, z)
         self.chemSymbol:    str     = chemSymbol
         # self.atomicNumber:  int     = atomicNumber
         # self.atomicWeight:  float   = atomicWeight
-        super().__init__(x, y, z)
     
     def __repr__(self):
         return f"{self.chemSymbol}"
@@ -40,5 +38,4 @@ class Atom(Vector):
     def fromStr(cls, atomLine:str) -> "Atom":
         chemSymbol, x, y, z = atomLine.split()
         return cls(chemSymbol, x=float(x), y=float(y), z=float(z))
-    
     

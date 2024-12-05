@@ -27,19 +27,19 @@ def toCodomain(dynamicDict: list[dict[any, int]]) -> dict[any, np.array]:
     return foundKeys
 
 def main(**argv):
-    filePicked = fd.askopenfilenames(title='Select speciation to analyze', initialdir = config.pythonOutput)
+    # filePicked = fd.askopenfilenames(title='Select speciation to analyze', initialdir = config.pythonOutput)
 
-    trajectory = FileSpeciation(filePicked[0])
-    listOfDict = trajectory.plot()
-    codomains = toCodomain(listOfDict)
-    df = pd.DataFrame(codomains, dtype=float)
-    df = df[df.iloc[0].sort_values(ascending=False).index]
-    dfpercent = df.div(df.sum(axis=1), axis=0) * 100
-    ax = dfpercent.plot.area()
-    ax.set_xlim(0, len(listOfDict)-1)
-    ax.set_ylim(0, 100)
+    # trajectory = FileSpeciation(filePicked[0])
+    # listOfDict = trajectory.plot()
+    # codomains = toCodomain(listOfDict)
+    # df = pd.DataFrame(codomains, dtype=float)
+    # df = df[df.iloc[0].sort_values(ascending=False).index]
+    # dfpercent = df.div(df.sum(axis=1), axis=0) * 100
+    # ax = dfpercent.plot.area()
+    # ax.set_xlim(0, len(listOfDict)-1)
+    # ax.set_ylim(0, 100)
     
-    plt.show()
+    # plt.show()
 
     selectedFiles = fd.askopenfilenames(title='Select XYZ files', initialdir=r'C:\Users\JL252842\Documents\Thesis\Data\Raw\Simulations\2024-11-22\AIMD-SCAN-AF')
     files=[]
