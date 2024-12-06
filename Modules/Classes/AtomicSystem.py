@@ -14,36 +14,14 @@ class AtomicSystem():
 
     def __init__(
             self,
-            inputData: Iterable[str]= None,
-            size:           float   = None,
+            atoms:  list[Atom]  = None,
+            numpyArrays: tuple[list, np.ndarray, np.ndarray, np.ndarray] = None,
+            size:   float       = None,
             ):
         
         if size is not None: self.size = size
-        self._numpyArrays = None
-        self.atoms: list[Atom] = self.fromIterable(inputData)
-
-    
-
-    def fromIterable(self, atomlist: Iterable[str]) -> list["Atom"]:
-        atoms:          list[Atom] = []
-        atomSymbols:    list[str]   = []
-        xCoordinates:   list[float] = []
-        yCoordinates:   list[float] = []
-        zCoordinates:   list[float] = []
-
-        for atomLine in atomlist:
-            atom = Atom.fromStr(atomLine)
-            atoms.append(atom)
-            atomSymbols.append(atom.chemSymbol)
-            xCoordinates.append(float(atom.x))
-            yCoordinates.append(float(atom.y))
-            zCoordinates.append(float(atom.z))
-
-        xArray = np.array(xCoordinates, dtype=float)
-        yArray = np.array(yCoordinates, dtype=float)
-        zArray = np.array(zCoordinates, dtype=float)
-        self._numpyArrays = (atomSymbols, xArray, yArray, zArray)
-        return atoms
+        self.atoms = atoms
+        self._numpyArrays = numpyArrays
     
     @cached_property
     def distanceMatrix(self) -> np.ndarray:

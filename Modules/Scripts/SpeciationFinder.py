@@ -34,8 +34,6 @@ def indirectMethod(xyzFile):
     cp2kFile = FileCP2Kinput(currentDirPath)
     atomicFile = FileTrajectory(xyzFile, linkedCP2KFile=cp2kFile)
     print("Reading:", atomicFile.name)
-    # trj = atomicFile.buildTrajectory()
-    # return atomicFile.trajectory.dynamicSpeciation
     return atomicFile.trajectory
 
 @profile

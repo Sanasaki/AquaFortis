@@ -1,14 +1,11 @@
-import concurrent.futures as MPI
-from functools import cached_property
 from itertools import islice
-from typing import ClassVar, Iterator
+from typing import Iterator
 
 from Classes.AtomicSystem import AtomicSystem
+from Classes.AtomicSystemFactory import AtomicSystemFromIterable
 from Classes.FileTypes.CP2K import FileCP2Kinput
 from Classes.FileTypes.File import File
-from Classes.Speciation import Speciation
 from Classes.Trajectory import Trajectory
-from Functions.FxStaticFunctions import FxProcessTime
 
 
 class FileTrajectory(File):
@@ -34,15 +31,11 @@ class FileTrajectory(File):
         self.chunkSize:     int = self.atomNumber + self.linesToIgnore
         
     def yieldTrajectory(self) -> Iterator[AtomicSystem]:
-        # Coder une factory DP pour créer une liste d'atome qui sera donnée telle qu'elle à la classe AtomicSystem
-        # J'ai essayé, mais je ne suis pas sûr que ç'ait vraiment simplifier quoi que ce soit
-        # Alors j'ai laissé tel quel
-        
         start, stop = self.linesToIgnore, self.chunkSize
         with open(self.filePath, 'r') as file:
             for _ in range(0, self.fileLength, self.chunkSize):
                 chunk = islice(file, start, stop, 1)
-                yield AtomicSystem(inputData=chunk, size=self.atomicSystemSize)
+                yield AtomicSystemFromIterable(atomIterable=chunk, size=self.atomicSystemSize)
 
     @property
     def trajectory(self) -> Trajectory:

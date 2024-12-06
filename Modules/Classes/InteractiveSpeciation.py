@@ -1,15 +1,11 @@
 import tkinter as tk
-from tkinter import filedialog as fd
-from tkinter import messagebox, ttk
+from tkinter import ttk
 
 from Classes.Chemistry.Molecule import Molecule
-from Classes.Trajectory import Trajectory
 
 
 class InteractiveSpeciation():
     def __init__(self, recursiveItem):
-        
-        # self.recursiveItem = recursiveItem
 
         self.window = tk.Tk()
         self.window.title("Explore speciation")
@@ -43,6 +39,8 @@ class InteractiveSpeciation():
         
         self.window.mainloop()
 
+    # This function should be reversed, so that the treeview is built from the bottom up
+    # to ensure compatibility with Composite Design Pattern
     def recursiveExploration(self, parent):
         iid = self.treeview.insert("", "end", text = parent.__repr__(), values=parent, tags=("selected",))
         if parent.__class__.__name__ == "AtomicSystem":

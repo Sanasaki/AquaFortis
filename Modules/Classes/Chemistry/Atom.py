@@ -3,6 +3,7 @@ from Classes.Vector import Vector
 
 
 class Atom(Vector):
+    canHaveChildren = False
     # Atomic number and weight could be future implementations
     __slots__ = ("chemSymbol",
                 #  "atomicNumber", 
@@ -38,4 +39,3 @@ class Atom(Vector):
     def fromStr(cls, atomLine:str) -> "Atom":
         chemSymbol, x, y, z = atomLine.split()
         return cls(chemSymbol, x=float(x), y=float(y), z=float(z))
-    

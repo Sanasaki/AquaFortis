@@ -20,17 +20,7 @@ class ChemicalFormula:
             raise TypeError
         else:
             return condensedFormula
-        # HNO3
-        atomicElementPattern = r"([A-Z][a-z]*)(\d*\.?\d*)"
-        atomicMatches = re.findall(atomicElementPattern, condensedFormula)
-        atomicComposition = {}
-        for elementSymbol, elementCount in atomicMatches:
-            if elementCount == "":
-                elementCount = 1
-            element = Atom(chemSymbol=elementSymbol)
-            atomicComposition[element] = float(elementCount)*formulaRepetition
-
-        return cls(atomicComposition)
+        
     
     @classmethod
     def _fromAtoms(cls, listOfAtoms):
