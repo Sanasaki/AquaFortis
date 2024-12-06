@@ -1,6 +1,6 @@
 
 
-import config
+import globalConfigs
 from Classes.ChemicalFormula import ChemicalFormula
 from Classes.Chemistry.Atom import Atom
 from Classes.Vector import Vector
@@ -30,7 +30,7 @@ class Molecule(Vector):
         ax.set_ylim([0, Molecule.atomicSystemSize])
         ax.set_zlim([0, Molecule.atomicSystemSize])
         
-        colorList = [config.colorAtom[atom.chemSymbol] for atom in self.atoms]
+        colorList = [globalConfigs.colorAtom[atom.chemSymbol] for atom in self.atoms]
         x = [atom.x + Molecule.atomicSystemSize/2 for atom in self.atoms]
         y = [atom.y + Molecule.atomicSystemSize/2 for atom in self.atoms]
         z = [atom.z + Molecule.atomicSystemSize/2 for atom in self.atoms]

@@ -1,6 +1,6 @@
 import json
 
-import config
+import globalConfigs
 from Classes.AtomicSystem import AtomicSystem
 from Classes.Chemistry.Atom import Atom
 from Classes.FileTypes.File import File
@@ -68,7 +68,7 @@ class FileCP2K(File):
 
 
 def main():
-    xyzFile = FileTrajectory(config.testFilesDir + "/xyz/80HNO3-20H2O-1-pos-1-f4.xyz")
+    xyzFile = FileTrajectory(globalConfigs.testFilesDirPath + "/xyz/80HNO3-20H2O-1-pos-1-f4.xyz")
     atomicSystem = xyzFile.trajectory.frames[0]
 
     cp2k = CP2K.readJSON("cp2k_input.json")

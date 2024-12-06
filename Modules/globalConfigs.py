@@ -13,5 +13,5 @@ colorAtom: dict[str, str] = {"H": "green", "N" : "blue", "O": "red"}
 
 cutOff: float = 1.577
 
-pythonOutput: str = r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput"
-testFilesDir: str = r"C:\Users\JL252842\Documents\Thesis\Python\TestFiles"
+pythonOutputPath: str = r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput"
+testFilesDirPath: str = r"C:\Users\JL252842\Documents\Thesis\Python\TestFiles"

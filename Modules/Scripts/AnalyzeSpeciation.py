@@ -1,6 +1,6 @@
 from tkinter import filedialog as fd
 
-import config
+import globalConfigs
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
