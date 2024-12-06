@@ -5,14 +5,14 @@ from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
 
 
-def MoleculeFromAtoms(atoms) -> "Molecule":
+def MoleculeFromAtoms(atoms) -> 'Molecule':
     try:
         atoms[-1].chemSymbol
     except AttributeError:
         raise ValueError("Input is not a list of Atom objects")
     return Molecule(atoms)
 
-def MoleculeFromChemicalFormula(chemicalFormula) -> "Molecule":
+def MoleculeFromChemicalFormula(chemicalFormula) -> 'Molecule':
     atomicElementPattern = r"([A-Z][a-z]*)(\d*)"
     atomicMatches = re.findall(atomicElementPattern, chemicalFormula)
     atomicComposition = []

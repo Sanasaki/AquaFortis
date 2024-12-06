@@ -1,4 +1,6 @@
 
+
+
 from Classes.AtomicSystem import AtomicSystem
 from Classes.Speciation import Speciation
 
@@ -7,14 +9,14 @@ class Trajectory():
     timestep:       float   = 0.5
     framesPerPs:    int     = int(1000 / timestep)
 
-    def __init__(self, frames: list[AtomicSystem]=None):
+    def __init__(self, frames: list['AtomicSystem']=None):
         self.frames = frames
 
     def __repr__(self):
         return f"Trajectory with {len(self.frames)} frames"
 
     @property
-    def dynamicSpeciation(self) -> list[Speciation]:
+    def dynamicSpeciation(self) -> list['Speciation']:
         return [frame.speciation for frame in self.frames]
     
     @property

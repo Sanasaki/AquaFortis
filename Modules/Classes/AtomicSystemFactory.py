@@ -5,8 +5,8 @@ from Classes.AtomicSystem import AtomicSystem
 from Classes.Chemistry.Atom import Atom
 
 
-def AtomicSystemFromIterable(atomIterable: Iterable[str], size: float= None) -> "AtomicSystem":
-        atoms:          list[Atom] = []
+def AtomicSystemFromIterable(atomIterable: Iterable[str], size: float= None) -> 'AtomicSystem':
+        atoms:          list['Atom'] = []
         atomSymbols:    list[str]   = []
         xCoordinates:   list[float] = []
         yCoordinates:   list[float] = []
