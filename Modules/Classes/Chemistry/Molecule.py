@@ -1,4 +1,4 @@
-
+from typing import Any
 
 import globalConfigs
 from Classes.ChemicalFormula import ChemicalFormula
@@ -16,35 +16,35 @@ class Molecule(Vector):
 
     def __repr__(self):
         return f"{self.chemicalFormula}: {self.atoms}"
-    
+
     def __hash__(self):
         return hash(self.chemicalFormula)
-    
-    def __eq__(self, other):
+
+    def __eq__(self, other: Any) -> bool:
         return self.__hash__() == other.__hash__()
-       
-    def plot(self, printPositions=False):
+
+    def plot(self, printPositions: bool = False):
         fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
-        ax.set_xlim([0, Molecule.atomicSystemSize])
-        ax.set_ylim([0, Molecule.atomicSystemSize])
-        ax.set_zlim([0, Molecule.atomicSystemSize])
-        
+        ax = fig.add_subplot(projection="3d")
+        ax.set_xlim(0, Molecule.atomicSystemSize)
+        ax.set_ylim(0, Molecule.atomicSystemSize)
+        ax.set_zlim(0, Molecule.atomicSystemSize)
+
         colorList = [globalConfigs.colorAtom[atom.chemSymbol] for atom in self.atoms]
-        x = [atom.x + Molecule.atomicSystemSize/2 for atom in self.atoms]
-        y = [atom.y + Molecule.atomicSystemSize/2 for atom in self.atoms]
-        z = [atom.z + Molecule.atomicSystemSize/2 for atom in self.atoms]
-        if printPositions==True:
+        x = [atom.x + Molecule.atomicSystemSize / 2 for atom in self.atoms]
+        y = [atom.y + Molecule.atomicSystemSize / 2 for atom in self.atoms]
+        z = [atom.z + Molecule.atomicSystemSize / 2 for atom in self.atoms]
+        if printPositions:
             print(f"{self}")
             for atom in self.atoms:
                 print(atom.chemSymbol, atom.x, atom.y, atom.z)
-        ax.scatter3D(x,y,z, c=colorList, s=100)
+        ax.scatter3D(x, y, z, c=colorList, s=100)
         plt.show()
-
 
 
 def main():
     pass
+
 
 if __name__ == "__main__":
     main()

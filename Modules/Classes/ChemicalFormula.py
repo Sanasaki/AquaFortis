@@ -1,4 +1,4 @@
-import re
+from typing import Any
 
 from Classes.Chemistry.Atom import Atom
 
@@ -6,51 +6,61 @@ from Classes.Chemistry.Atom import Atom
 class ChemicalFormula:
     __slots__ = ["formula"]
 
-    def __init__(self, inputName):
+    def __init__(self, inputName: str | list["Atom"]) -> None:
         try:
-            self.formula = self._fromCondensed(inputName)
-            # self.formula = "Blablbalba"
+            self.formula = inputName
         except TypeError:
-            # print("Atoms parsed instead of condensed formula.")
             self.formula = self._fromAtoms(inputName)
 
+    # @classmethod
+    # def _fromCondensed(cls, condensedFormula: str, formulaRepetition: float = 1):
+    #     if not isinstance(condensedFormula, str):
+    #         raise TypeError
+    #     else:
+    #         return condensedFormula
+
     @classmethod
-    def _fromCondensed(cls, condensedFormula: str, formulaRepetition: float=1):
-        if not isinstance(condensedFormula, str):
-            raise TypeError
-        else:
-            return condensedFormula
-        
-    
-    @classmethod
-    def _fromAtoms(cls, listOfAtoms):
-        countH = 0
-        countN = 0
-        countO = 0
+    def _fromAtoms(cls, listOfAtoms: list["Atom"]) -> "ChemicalFormula":
+        countH: int = 0
+        countN: int = 0
+        countO: int = 0
         for child in listOfAtoms:
-            if child.__repr__() == 'H': countH +=1
-            if child.__repr__() == 'N': countN +=1
-            if child.__repr__() == 'O': countO +=1
-        if countH==0: strH=''
-        if countH==1: strH='H'
-        if countH>1: strH=f'H{countH}'
+            if child.__repr__() == "H":
+                countH += 1
+            if child.__repr__() == "N":
+                countN += 1
+            if child.__repr__() == "O":
+                countO += 1
 
-        if countN==0: strN=''
-        if countN==1: strN='N'
-        if countN>1: strN=f'N{countN}'
+        if countH == 0:
+            strH: str = ""
+        elif countH == 1:
+            strH: str = "H"
+        else:
+            strH: str = f"H{countH}"
 
-        if countO==0: strO=''
-        if countO==1: strO='O'
-        if countO>1: strO=f'O{countO}'
+        if countN == 0:
+            strN: str = ""
+        elif countN == 1:
+            strN: str = "N"
+        else:
+            strN: str = f"N{countN}"
 
-        name = f"{''.join([strH, strN, strO])}"
+        if countO == 0:
+            strO: str = ""
+        elif countO == 1:
+            strO: str = "O"
+        else:
+            strO: str = f"O{countO}"
+
+        name: str = f"{''.join([strH, strN, strO])}"
         return cls(name)
-    
+
     def __hash__(self):
         return hash(self.formula)
-    
-    def __eq__(self, other):
+
+    def __eq__(self, other: Any) -> bool:
         return self.__hash__() == other.__hash__()
-    
+
     def __repr__(self):
         return f"{self.formula}"
