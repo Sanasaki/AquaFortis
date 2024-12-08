@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from functools import cached_property
 
 import globalConfigs
@@ -7,6 +8,11 @@ from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
 from Classes.Speciation import Speciation
 from matplotlib import pyplot as plt
+
+
+@dataclass(slots=True)
+class AtomicSystemArray:
+    pass
 
 
 class AtomicSystem:
