@@ -43,14 +43,12 @@ class CP2K:
                 try:
                     for key, value in dataDict.items():
                         f.write(f"{' '*indent}")
-                        if type(value) is dict:
-                            assert value is dict
+                        if type(value) is dict[Any, Any]:
                             f.write(f"&{key}\n")
                             write_recursive(value, indent + 4)
                             f.write(f"{' '*indent}")
                             f.write(f"&END {key}")
-                        elif type(value) is list:
-                            assert value is list[Any]
+                        elif type(value) is list[Any]:
                             f.write(f"{key}\t")
                             f.write(
                                 "\t".join(
