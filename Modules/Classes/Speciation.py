@@ -11,8 +11,7 @@ class Speciation:
     {HNO3: 16, H2O: 76, H3NO4: 4}
     """
 
-    species: dict[ChemicalFormula, list[Molecule]] = None
-    index: int = None
+    species: dict[ChemicalFormula, list[Molecule]]
 
     # @classmethod
     # def fromStr(cls, stringLine: str) -> dict[str, int]:
@@ -27,7 +26,7 @@ class Speciation:
     #     return cls(species=moleculeFound)
 
     @classmethod
-    def fromDict(cls, dictLine: dict[str, list[Molecule]]):
+    def fromDict(cls, dictLine: dict[ChemicalFormula, list[Molecule]]):
         return cls(species=dictLine)
 
     @classmethod
@@ -39,9 +38,17 @@ class Speciation:
             ) + [molecule]
         return cls(species=moleculesDictList)
 
-    def __repr__(self):
-        # printValue = " "
-        # for keys, values in self.species.items():
-        #     printValue += (f"{keys}: {len(values)} ")
-
+    def __repr__(self) -> str:
         return f"{self.species}"
+
+    def __str__(self) -> str:
+        printValue = "{"
+        for keys, values in self.species.items():
+            printValue += f"{keys}: {len(values)}, "
+        printValue = printValue[:-2] + "}"
+        return printValue
+
+    # def toWrite(self):
+    #     # {HNO3: 16, H2O: 76, H3NO4: 4}
+    #     for moleculeName in self.species.keys():
+    #         print(f"{moleculeName}: {len(self.species[moleculeName])}")

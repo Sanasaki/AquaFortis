@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from functools import cached_property
 
 import globalConfigs
@@ -6,13 +5,9 @@ import numpy as np
 import numpy.typing as npt
 from Classes.Chemistry.Atom import Atom
 from Classes.Chemistry.Molecule import Molecule
-from Classes.Speciation import Speciation
+
+# from Classes.Speciation import Speciation
 from matplotlib import pyplot as plt
-
-
-@dataclass(slots=True)
-class AtomicSystemArray:
-    pass
 
 
 class AtomicSystem:
@@ -34,90 +29,94 @@ class AtomicSystem:
         self._numpyArrays = numpyArrays
 
     @cached_property
-    def distanceMatrix(self) -> npt.NDArray[np.float64]:
-        def matrixModulo(
-            distanceArray: npt.NDArray[np.float64], atomicSystemSize: float
-        ) -> npt.NDArray[np.float64]:
-            distanceArray = np.where(
-                distanceArray > (atomicSystemSize / 2),
-                atomicSystemSize - distanceArray,
-                distanceArray,
-            )
-            return distanceArray
+    def numpyArrays(self):
+        return self._numpyArrays
 
-        def getDistanceArray(array: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
-            return abs(array[:, None] - array[None, :])
+    # @cached_property
+    # def distanceMatrix(self) -> npt.NDArray[np.float64]:
+    #     def matrixModulo(
+    #         distanceArray: npt.NDArray[np.float64], atomicSystemSize: float
+    #     ) -> npt.NDArray[np.float64]:
+    #         distanceArray = np.where(
+    #             distanceArray > (atomicSystemSize / 2),
+    #             atomicSystemSize - distanceArray,
+    #             distanceArray,
+    #         )
+    #         return distanceArray
 
-        _, x, y, z = self._numpyArrays
+    #     def getDistanceArray(array: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
+    #         return abs(array[:, None] - array[None, :])
 
-        dx = getDistanceArray(x)
-        dx = matrixModulo(dx, self.size)
+    #     _, x, y, z = self._numpyArrays
 
-        dy = getDistanceArray(y)
-        dy = matrixModulo(dy, self.size)
+    #     dx = getDistanceArray(x)
+    #     dx = matrixModulo(dx, self.size)
 
-        dz = getDistanceArray(z)
-        dz = matrixModulo(dz, self.size)
+    #     dy = getDistanceArray(y)
+    #     dy = matrixModulo(dy, self.size)
 
-        return (dx**2 + dy**2 + dz**2) ** (1 / 2)
+    #     dz = getDistanceArray(z)
+    #     dz = matrixModulo(dz, self.size)
 
-    @cached_property
-    def neighborsMatrix(self, isOneIndexed: bool = False) -> npt.NDArray[np.float64]:
-        neighborsMatrix = np.where(
-            self.distanceMatrix < AtomicSystem.cutoffRadii, float(1), float(0)
-        )
-        neighborsMatrix[neighborsMatrix == 0] = ["NaN"]
-        # Multiplying each col by its index, thus transforming 1 -> index
-        neighborsMatrix[:] *= range(len(self.distanceMatrix[0]))
-        if isOneIndexed is True:
-            neighborsMatrix[:] += 1
+    #     return (dx**2 + dy**2 + dz**2) ** (1 / 2)
 
-        return neighborsMatrix
+    # @cached_property
+    # def neighborsMatrix(self, isOneIndexed: bool = False) -> npt.NDArray[np.float64]:
+    #     neighborsMatrix = np.where(
+    #         self.distanceMatrix < AtomicSystem.cutoffRadii, float(1), float(0)
+    #     )
+    #     neighborsMatrix[neighborsMatrix == 0] = ["NaN"]
+    #     # Multiplying each col by its index, thus transforming 1 -> index
+    #     neighborsMatrix[:] *= range(len(self.distanceMatrix[0]))
+    #     if isOneIndexed is True:
+    #         neighborsMatrix[:] += 1
 
-    @cached_property
-    def neighborsPerAtom(self) -> dict[Atom, list[Atom]]:
-        # Zip function is very slow, so it should be replaced with a dict update here
-        # neighbors = {}
-        # this atom neighbor = {i : self.atoms[int(j)]}
-        # neighbors.update(this atom neighbor)
-        neighbors: list[list[Atom]] = []
+    #     return neighborsMatrix
 
-        for i in range(len(self.neighborsMatrix)):
-            listOfIndex = (
-                (self.neighborsMatrix[i, :])[~np.isnan(self.neighborsMatrix[i, :])]
-            ).tolist()
-            iNeighbors: list[Atom] = []
-            for j in listOfIndex:
-                iNeighbors.append(self.atoms[int(j)])
-            neighbors.append(iNeighbors)
+    # @cached_property
+    # def neighborsPerAtom(self) -> dict[Atom, list[Atom]]:
+    #     # Zip function is very slow, so it should be replaced with a dict update here
+    #     # neighbors = {}
+    #     # this atom neighbor = {i : self.atoms[int(j)]}
+    #     # neighbors.update(this atom neighbor)
+    #     neighbors: list[list[Atom]] = []
 
-        return {atom: neighbors for atom, neighbors in zip(self.atoms, neighbors)}
+    #     for i in range(len(self.neighborsMatrix)):
+    #         listOfIndex = (
+    #             (self.neighborsMatrix[i, :])[~np.isnan(self.neighborsMatrix[i, :])]
+    #         ).tolist()
+    #         iNeighbors: list[Atom] = []
+    #         for j in listOfIndex:
+    #             iNeighbors.append(self.atoms[int(j)])
+    #         neighbors.append(iNeighbors)
 
-    @cached_property
-    def molecules(self) -> list[Molecule]:
-        molecules: list[Molecule] = []
+    #     return {atom: neighbors for atom, neighbors in zip(self.atoms, neighbors)}
 
-        def parseNeighbors(parsedAtoms: dict[Atom, bool], atom: Atom) -> None:
-            if not parsedAtoms.get(atom, False):
-                parsedAtoms[atom] = True
-                for neighborAtom in self.neighborsPerAtom[atom]:
-                    parseNeighbors(parsedAtoms, neighborAtom)
+    # @cached_property
+    # def molecules(self) -> list[Molecule]:
+    #     molecules: list[Molecule] = []
 
-        totalParsedAtoms: dict[Atom, bool] = {}
+    #     def parseNeighbors(parsedAtoms: dict[Atom, bool], atom: Atom) -> None:
+    #         if not parsedAtoms.get(atom, False):
+    #             parsedAtoms[atom] = True
+    #             for neighborAtom in self.neighborsPerAtom[atom]:
+    #                 parseNeighbors(parsedAtoms, neighborAtom)
 
-        for atom in self.neighborsPerAtom.keys():
-            if not totalParsedAtoms.get(atom, False):
-                newMoleculeAtoms: dict[Atom, bool] = {}
-                parseNeighbors(newMoleculeAtoms, atom)
-                totalParsedAtoms.update(newMoleculeAtoms)
-                # is this one-liner understandable?
-                molecules.append(Molecule([atom for atom in newMoleculeAtoms.keys()]))
+    #     totalParsedAtoms: dict[Atom, bool] = {}
 
-        return molecules
+    #     for atom in self.neighborsPerAtom.keys():
+    #         if not totalParsedAtoms.get(atom, False):
+    #             newMoleculeAtoms: dict[Atom, bool] = {}
+    #             parseNeighbors(newMoleculeAtoms, atom)
+    #             totalParsedAtoms.update(newMoleculeAtoms)
+    #             # is this one-liner understandable?
+    #             molecules.append(Molecule([atom for atom in newMoleculeAtoms.keys()]))
 
-    @cached_property
-    def speciation(self):
-        return Speciation.fromList(self.molecules)
+    #     return molecules
+
+    # @cached_property
+    # def speciation(self):
+    #     return Speciation.fromList(self.molecules)
 
     # def write(self, path) -> None:
     #     with open(path, "w") as f:
@@ -128,8 +127,8 @@ class AtomicSystem:
     #             for atom in self.__iter__()
     #         )
 
-    def __iter__(self) -> "AtomicSystemIterator":
-        return AtomicSystemIterator(self)
+    def __iter__(self) -> "AtomicSystemIteratorHelper":
+        return AtomicSystemIteratorHelper(self)
 
     def __repr__(self) -> str:
         return f"Frame with {len(self.atoms)} atoms"
@@ -153,12 +152,12 @@ class AtomicSystem:
     #     return self.molecules
 
 
-class AtomicSystemIterator:
+class AtomicSystemIteratorHelper:
     def __init__(self, atomicSystem: AtomicSystem):
         self.atoms = atomicSystem.atoms
         self.index = 0
 
-    def __iter__(self) -> "AtomicSystemIterator":
+    def __iter__(self) -> "AtomicSystemIteratorHelper":
         return self
 
     def __next__(self) -> "Atom":

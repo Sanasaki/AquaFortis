@@ -5,7 +5,7 @@ from Classes.AtomicSystem import AtomicSystem
 from Classes.Chemistry.Atom import Atom
 
 
-def AtomicSystemFromIterable(
+def createAtomicSystem(
     atomIterable: Iterable[str], size: float = None
 ) -> "AtomicSystem":
     atoms: list["Atom"] = []

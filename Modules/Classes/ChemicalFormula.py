@@ -1,26 +1,36 @@
+from dataclasses import dataclass
 from typing import Any
 
 from Classes.Chemistry.Atom import Atom
 
 
+@dataclass(slots=True)
 class ChemicalFormula:
-    __slots__ = ["formula"]
+    # __slots__ = ["formula"]
+    """
+    formula = "HNO3"
+    """
 
-    def __init__(self, inputName: str | list["Atom"]) -> None:
-        try:
-            self.formula = inputName
-        except TypeError:
-            self.formula = self._fromAtoms(inputName)
+    formula: str
+
+    # def __init__(self, inputName: str) -> None:
+    #     assert isinstance(inputName, str)
+    #     self.formula = inputName
+
+    # try:
+    #     self.formula = self._fromCondensed(inputName)
+    # except TypeError:
+    #     self.formula = self._fromAtoms(inputName)
 
     # @classmethod
     # def _fromCondensed(cls, condensedFormula: str, formulaRepetition: float = 1):
     #     if not isinstance(condensedFormula, str):
     #         raise TypeError
     #     else:
-    #         return condensedFormula
+    #         return cls(condensedFormula)
 
     @classmethod
-    def _fromAtoms(cls, listOfAtoms: list["Atom"]) -> "ChemicalFormula":
+    def fromAtoms(cls, listOfAtoms: list["Atom"]) -> "ChemicalFormula":
         countH: int = 0
         countN: int = 0
         countO: int = 0

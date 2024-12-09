@@ -12,7 +12,7 @@ class Molecule(Vector):
 
     def __init__(self, atomList: list[Atom]):
         self.atoms = atomList
-        self.chemicalFormula = ChemicalFormula(self.atoms)
+        self.chemicalFormula = ChemicalFormula.fromAtoms(self.atoms)
 
     def __repr__(self):
         return f"{self.chemicalFormula}: {self.atoms}"

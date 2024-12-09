@@ -2,7 +2,25 @@ import os
 import time
 from collections.abc import Callable
 from functools import wraps
-from typing import Any
+from tkinter import filedialog as fd
+from typing import Any, Literal
+
+import globalConfigs
+
+
+def pickAFile() -> str:
+    return fd.askopenfilename(
+        title="Select XYZ files",
+        initialdir=globalConfigs.testFilesDirPath,
+    )
+
+
+def pickFiles() -> tuple[str, ...] | Literal[""]:
+    return fd.askopenfilenames(
+        title="Select XYZ files",
+        initialdir=globalConfigs.testFilesDirPath,
+    )
+
 
 # def FxRelativeExport(exportPath: str = None, dirName: str = None):
 #     if dirName is None:

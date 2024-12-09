@@ -2,6 +2,7 @@ __pycache__/
 .vscode/
 backup_env/
 TestFiles/
+TestData/
 python3.12backup/
 python313t/
 .virtualenvs/
