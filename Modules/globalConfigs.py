@@ -9,15 +9,23 @@ periodicTable: dict[str, dict[str, float | int]] = {
     "O": {"atomicWeight": 15.999, "atomicNumber": 8},
 }
 
+
+STATS_ENSEMBLE = {
+    "NVT": ("amount", "size", "temperature"),
+    "NPT": ("amount", "pressure", "temperature"),
+}
+
+
 colorAtom: dict[str, str] = {"H": "green", "N": "blue", "O": "red"}
 
 cutOff: float = 1.577
 
+rootPath: str = r"C:\Users\JL252842\Documents\Thesis\Python"
+testFilesDirPath: str = rootPath + r"\TestFiles"
+testDataPath: str = rootPath + r"\Tests\TestData"
+
 pythonOutputPath: str = (
     r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput"
 )
-testFilesDirPath: str = r"C:\Users\JL252842\Documents\Thesis\Python\TestFiles"
 
-testDataPath: str = r"C:\Users\JL252842\Documents\Thesis\Python\Tests\TestData"
-
-rootPath: str = r"C:\Users\JL252842\Documents\Thesis\Python"
+moleculesPath: str = r"C:\Users\JL252842\Documents\Thesis\Lab\ReferenceData\Molecules"
