@@ -1,5 +1,7 @@
+from abc import ABC
+
 import globalConfigs
-from Scripts.LammpsFactoryComponent.ForceField import ForceField, LennardJonesCoul
+from Scripts.LammpsFactoryComponent.ForceField import LammpsForceField, LennardJonesCoul
 from Scripts.LammpsFactoryComponent.LammpsFix import FixNPT, FixNVT, LammpsFix
 from Scripts.LammpsFactoryComponent.LammpsInit import DefaultInit, LammpsInit
 from Scripts.LammpsFactoryComponent.LammpsRegion import (
@@ -9,20 +11,26 @@ from Scripts.LammpsFactoryComponent.LammpsRegion import (
 )
 
 
-class LammpsFactory:
-    initializer: LammpsInit = DefaultInit()
-    forcefield: ForceField = LennardJonesCoul()
-    region: LammpsRegion = DefaultRegion()
-    particles: LammpsMolecules = LammpsMolecules(region=region)
-    runs: list[LammpsFix]
+class LammpsScript(ABC):
+    prefix: str
+    suffix: str
 
+    def __init__(self):
+        self.initialization: LammpsInit = DefaultInit()
+        self.region: LammpsRegion = DefaultRegion()
+        self.forcefield: LammpsForceField = LennardJonesCoul()
+        self.particles: LammpsMolecules = LammpsMolecules(self.region)
+        self.runs: list[LammpsFix] = []
+
+
+class LammpsFactory(LammpsScript):
     @classmethod
     def addRun(cls, fix: LammpsFix, duration: int):
         pass
 
     def __str__(self):
         content: str = ""
-        content += self.initializer.write()
+        content += self.initialization.write()
         content += "\n"
         content += self.forcefield.write()
         content += "\n"

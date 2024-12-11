@@ -4,7 +4,7 @@ from Scripts.LammpsFactoryComponent.LammpsScriptComponent import LammpsScriptCom
 
 
 @dataclass
-class ForceField(LammpsScriptComponent):
+class LammpsForceField(LammpsScriptComponent):
     atom_style: str
     pair_style: str
     bond_style: str
@@ -23,7 +23,7 @@ class ForceField(LammpsScriptComponent):
 
 
 @dataclass
-class LennardJonesCoul(ForceField):
+class LennardJonesCoul(LammpsForceField):
     atom_style: str = "full"
     pair_style: str = "lj/cut/coul/wolf 0.2 10"
     bond_style: str = "zero"
