@@ -3,18 +3,21 @@ from typing import Self
 
 
 class Vector(ABC):
-    __slots__ = "x", "y", "z"
+    __slots__ = "label", "x", "y", "z"
 
-    def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0):
+    def __init__(
+        self, x: float = 0.0, y: float = 0.0, z: float = 0.0, label: str = ""
+    ) -> None:
         self.x: float = x
         self.y: float = y
         self.z: float = z
+        self.label: str = label
 
     def __add__(self, other: Self) -> "Vector":
-        return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
+        return Vector(x=self.x + other.x, y=self.y + other.y, z=self.z + other.z)
 
     def __sub__(self: Self, other: Self) -> "Vector":
-        return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
+        return Vector(x=self.x - other.x, y=self.y - other.y, z=self.z - other.z)
 
     def setOrigin(self, other: Self) -> None:
         self.x -= other.x

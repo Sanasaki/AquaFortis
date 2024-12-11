@@ -6,7 +6,7 @@ from Functions.FxInferMolecules import inferMolecules
 from Functions.FxNeighborsPerAtom import neighborsPerAtom
 from Functions.FxStaticFunctions import pickFiles
 from Simulation.SimulationCell import SimulationCell
-from Systems.Speciation import MolecularSystem
+from Systems.MolecularSystem import MolecularSystem
 
 
 def computeSpeciation(file: str):
@@ -26,7 +26,7 @@ def computeSpeciation(file: str):
                 distanceMatrixArray, frame.system.atoms
             )
             moleculesList = inferMolecules(neighborsPerAtomDict)
-            yield str(i) + " " + str(MolecularSystem(moleculesList).toDict()) + "\n"
+            yield str(i) + " " + str(MolecularSystem(moleculesList).asDict) + "\n"
 
     speciationsStr = list(speciationYielder(frames))
 

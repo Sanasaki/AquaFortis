@@ -23,8 +23,8 @@ class SimulationCell:
             npt.NDArray[np.float64],
         ],
     ) -> None:
-        self.cellSize = cellSize
         self.system = system
+        self.cellSize = cellSize
         self._data = numpyArrays
 
     @cached_property

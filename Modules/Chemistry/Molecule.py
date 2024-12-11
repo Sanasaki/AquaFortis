@@ -3,17 +3,15 @@ from typing import Any
 
 import globalConfigs
 from Chemistry.Atom import Atom
-from Classes.Vector import Vector
 from matplotlib import pyplot as plt
-from Systems.AbstractSystem import Component
+from Systems.AtomicSystem import AtomicSystem
 
 
-class Molecule(Vector, Component):
+class Molecule(AtomicSystem):
     atomicSystemSize: float = 30
-    __slots__ = "atoms", "label"
 
     def __init__(self, atomList: list[Atom]):
-        self.atoms = atomList
+        super().__init__(atoms=atomList, x=0, y=0, z=0, label="")
         self.label = self.inferFormula(self.atoms)
         self.chemicalFormula = self.label
         self.formula = self.label

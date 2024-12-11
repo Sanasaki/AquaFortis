@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from Chemistry.Molecule import Molecule
 from Scripts.LammpsFactoryComponent.LammpsScriptComponent import LammpsScriptComponent
-from Systems.Speciation import MolecularSystem
+from Systems.MolecularSystem import MolecularSystem
 
 
 @dataclass
@@ -226,9 +226,8 @@ class LammpsMolecules(RegionPart, LammpsScriptComponent):
                 }
             )
 
-    def addMolecules(self, speciation: MolecularSystem):
-        for chemicalFormula, moleculeCount in speciation.species.items():
-            self.addMolecule(chemicalFormula.formula, len(moleculeCount))
+    def addMolecules(self, molecularSystem: MolecularSystem):
+        self.particles.update(molecularSystem.asDict)
 
 
 def test_LammpsRegion():
