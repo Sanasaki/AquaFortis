@@ -13,6 +13,7 @@ class FileTrajectory(File):
         "linesToIgnore",
         "chunkSize",
         "trajectory",
+        "trajectoryPP",
         "_atomNumber",
     )
 
@@ -34,6 +35,7 @@ class FileTrajectory(File):
         self.linesToIgnore: int = 2
         self.chunkSize: int = self.atomNumber + self.linesToIgnore
         self.trajectory = Trajectory(list(self.yieldTrajectory()))
+        # self.trajectoryPP = Trajectory(list(self.yieldTrajectoryPP()))
 
     def yieldTrajectory(self) -> Iterator[SimulationCell]:
         start, stop = self.linesToIgnore, self.chunkSize
@@ -43,6 +45,15 @@ class FileTrajectory(File):
                 yield SimulationCell.fromIterable(
                     atomIterable=chunk, size=self.atomicSystemSize
                 )
+
+    # def yieldTrajectoryPP(self) -> Iterator[SimulationCell]:
+    #     start, stop = self.linesToIgnore, self.chunkSize
+    #     # i = 0
+    #     with open(self.filePath, "r") as file:
+    #         while chunk := list(islice(file, start, stop, 1)):
+    #             yield SimulationCell.fromIterablePP(
+    #                 atomIterable=chunk, size=self.atomicSystemSize
+    #             )
 
     @property
     def atomNumber(self) -> int:

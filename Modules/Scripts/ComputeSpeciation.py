@@ -5,11 +5,12 @@ from FileTypes.FileXYZ import FileTrajectory
 from Functions.FxDistanceMatrix import distanceMatrix
 from Functions.FxInferMolecules import inferMolecules
 from Functions.FxNeighborsPerAtom import neighborsPerAtom
-from Functions.FxStaticFunctions import pickFiles
+from Functions.FxStaticFunctions import FxProcessTime, pickFiles
 from Simulation.SimulationCell import SimulationCell
 from Systems.AbstractSystem import System
 
 
+@FxProcessTime
 def computeSpeciation(file: str):
     xyzFile = FileTrajectory(filePath=file)
     trajectory = xyzFile.trajectory
@@ -19,7 +20,7 @@ def computeSpeciation(file: str):
     def speciationYielder(frames: list["SimulationCell"]):
         for i, frame in enumerate(frames):
             # print(i)
-            _, x, y, z = frame.numpyArrays
+            _, x, y, z = frame.data
             size = frame.cellSize
 
             distanceMatrixArray = distanceMatrix(x, y, z, size)
@@ -27,7 +28,12 @@ def computeSpeciation(file: str):
                 distanceMatrixArray, frame.system.components
             )
             moleculesList = inferMolecules(neighborsPerAtomDict)
-            yield str(i) + " " + str(System[Molecule](moleculesList).asDict) + "\n"
+            yield (
+                str(i)
+                + " "
+                + str(System[Molecule](moleculesList).asDict).replace("'", "")
+                + "\n"
+            )
 
     speciationsStr = list(speciationYielder(frames))
 

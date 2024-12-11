@@ -1,5 +1,4 @@
 from collections.abc import Iterable
-from functools import cached_property
 
 import globalConfigs
 import matplotlib.pyplot as plt
@@ -10,13 +9,14 @@ from Systems.AbstractSystem import System
 
 
 class SimulationCell:
+    __slots__ = "system", "cellSize", "data"
     cutoffRadii = globalConfigs.cutOff
 
     def __init__(
         self,
         system: System[Atom],
         cellSize: float,
-        numpyArrays: tuple[
+        data: tuple[
             list[str],
             npt.NDArray[np.float64],
             npt.NDArray[np.float64],
@@ -25,11 +25,7 @@ class SimulationCell:
     ) -> None:
         self.system = system
         self.cellSize = cellSize
-        self._data = numpyArrays
-
-    @cached_property
-    def numpyArrays(self):
-        return self._data
+        self.data = data
 
     def plot(self) -> None:
         fig: plt.Figure = plt.figure()
@@ -38,7 +34,7 @@ class SimulationCell:
         ax.set_ylim(0, self.cellSize)
         ax.set_zlim(0, self.cellSize)
 
-        colorList = [globalConfigs.colorAtom[atom.chemSymbol] for atom in self.system]
+        colorList = [globalConfigs.colorAtom[atom.label] for atom in self.system]
         x = [atom.x + self.cellSize / 2 for atom in self.system]
         y = [atom.y + self.cellSize / 2 for atom in self.system]
         z = [atom.z + self.cellSize / 2 for atom in self.system]
@@ -58,7 +54,7 @@ class SimulationCell:
         for atomLine in atomIterable:
             atom = Atom.fromStr(atomLine)
             atoms.append(atom)
-            atomSymbols.append(atom.chemSymbol)
+            atomSymbols.append(atom.label)
             xCoordinates.append(float(atom.x))
             yCoordinates.append(float(atom.y))
             zCoordinates.append(float(atom.z))
@@ -68,4 +64,11 @@ class SimulationCell:
         zArray = np.array(zCoordinates, dtype=float)
         atomicSystem = System[Atom](components=atoms)
         numpyArrays = (atomSymbols, xArray, yArray, zArray)
-        return cls(atomicSystem, numpyArrays=numpyArrays, cellSize=size)
+        return cls(atomicSystem, data=numpyArrays, cellSize=size)
+
+    @classmethod
+    def fromIterablePP(
+        cls, atomIterable: Iterable[str], size: float = None
+    ) -> "SimulationCell":
+        atomList = [Atom.fromStr(atomLine) for atomLine in atomIterable]
+        return cls(System[Atom](components=atomList), data=None, cellSize=size)

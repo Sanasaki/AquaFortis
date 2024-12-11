@@ -9,7 +9,8 @@ from Systems.AbstractSystem import System
 
 class Molecule(System[Atom]):
     atomicSystemSize: float = 30
-    __slots__ = "atoms", "chemicalFormula", "formula"
+    __slots__ = "atoms"
+    # , "label", "formula"
 
     # @property
     # def atoms(self) -> list[Atom]:
@@ -20,14 +21,14 @@ class Molecule(System[Atom]):
         self.atoms = self.components
 
         self.label = self.inferFormula(atomList)
-        self.chemicalFormula = self.label
-        self.formula = self.label
+        # self.chemicalFormula = self.label
+        # self.formula = self.label
 
     def __repr__(self):
-        return f"{self.chemicalFormula}: {self.atoms}"
+        return f"{self.label}: {self.atoms}"
 
     def __hash__(self):
-        return hash(self.chemicalFormula)
+        return hash(self.label)
 
     def __eq__(self, other: Any) -> bool:
         return self.__hash__() == other.__hash__()
@@ -39,14 +40,14 @@ class Molecule(System[Atom]):
         ax.set_ylim(0, Molecule.atomicSystemSize)
         ax.set_zlim(0, Molecule.atomicSystemSize)
 
-        colorList = [globalConfigs.colorAtom[atom.chemSymbol] for atom in self.atoms]
+        colorList = [globalConfigs.colorAtom[atom.label] for atom in self.atoms]
         x = [atom.x + Molecule.atomicSystemSize / 2 for atom in self.atoms]
         y = [atom.y + Molecule.atomicSystemSize / 2 for atom in self.atoms]
         z = [atom.z + Molecule.atomicSystemSize / 2 for atom in self.atoms]
         if printPositions:
             print(f"{self}")
             for atom in self.atoms:
-                print(atom.chemSymbol, atom.x, atom.y, atom.z)
+                print(atom.label, atom.x, atom.y, atom.z)
         ax.scatter3D(x, y, z, c=colorList, s=100)
         plt.show()
 
