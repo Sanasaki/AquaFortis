@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 from Chemistry.Atom import Atom
-from Systems.AtomicSystem import AtomicSystem
+from Systems.AbstractSystem import System
 
 
 class SimulationCell:
@@ -14,7 +14,7 @@ class SimulationCell:
 
     def __init__(
         self,
-        system: AtomicSystem,
+        system: System[Atom],
         cellSize: float,
         numpyArrays: tuple[
             list[str],
@@ -66,6 +66,6 @@ class SimulationCell:
         xArray = np.array(xCoordinates, dtype=float)
         yArray = np.array(yCoordinates, dtype=float)
         zArray = np.array(zCoordinates, dtype=float)
-        atomicSystem = AtomicSystem(atoms=atoms)
+        atomicSystem = System[Atom](components=atoms)
         numpyArrays = (atomSymbols, xArray, yArray, zArray)
         return cls(atomicSystem, numpyArrays=numpyArrays, cellSize=size)

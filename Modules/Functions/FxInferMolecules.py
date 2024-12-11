@@ -2,7 +2,7 @@ from Chemistry.Atom import Atom
 from Chemistry.Molecule import Molecule
 
 
-def inferMolecules(neighborsPerAtom: dict[Atom, list[Atom]]) -> list["Molecule"]:
+def inferMolecules(neighborsPerAtom: dict[Atom, list[Atom]]) -> list[Molecule]:
     molecules: list[Molecule] = []
 
     def parseNeighbors(parsedAtoms: dict[Atom, bool], atom: Atom) -> None:

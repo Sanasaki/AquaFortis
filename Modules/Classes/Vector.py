@@ -3,7 +3,7 @@ from typing import Self
 
 
 class Vector(ABC):
-    __slots__ = "label", "x", "y", "z"
+    __slots__ = "x", "y", "z", "label"
 
     def __init__(
         self, x: float = 0.0, y: float = 0.0, z: float = 0.0, label: str = ""
@@ -33,15 +33,8 @@ class Vector(ABC):
 
     @property
     def position(self):
-        return [self.x, self.y, self.z]
+        return (self.x, self.y, self.z)
 
     @position.setter
     def position(self, newVector: "Vector"):
         self.x, self.y, self.z = newVector.position
-
-    @staticmethod
-    def centerOfMass(vectors: list["Vector"]) -> "Vector":
-        x = sum([vector.x for vector in vectors]) / len(vectors)
-        y = sum([vector.y for vector in vectors]) / len(vectors)
-        z = sum([vector.z for vector in vectors]) / len(vectors)
-        return Vector(x, y, z)

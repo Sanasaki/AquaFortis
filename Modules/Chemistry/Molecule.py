@@ -4,15 +4,22 @@ from typing import Any
 import globalConfigs
 from Chemistry.Atom import Atom
 from matplotlib import pyplot as plt
-from Systems.AtomicSystem import AtomicSystem
+from Systems.AbstractSystem import System
 
 
-class Molecule(AtomicSystem):
+class Molecule(System[Atom]):
     atomicSystemSize: float = 30
+    __slots__ = "atoms", "chemicalFormula", "formula"
+
+    # @property
+    # def atoms(self) -> list[Atom]:
+    #     return self.components
 
     def __init__(self, atomList: list[Atom]):
-        super().__init__(atoms=atomList, x=0, y=0, z=0, label="")
-        self.label = self.inferFormula(self.atoms)
+        super().__init__(atomList)
+        self.atoms = self.components
+
+        self.label = self.inferFormula(atomList)
         self.chemicalFormula = self.label
         self.formula = self.label
 

@@ -1,12 +1,13 @@
 import concurrent.futures
 
+from Chemistry.Molecule import Molecule
 from FileTypes.FileXYZ import FileTrajectory
 from Functions.FxDistanceMatrix import distanceMatrix
 from Functions.FxInferMolecules import inferMolecules
 from Functions.FxNeighborsPerAtom import neighborsPerAtom
 from Functions.FxStaticFunctions import pickFiles
 from Simulation.SimulationCell import SimulationCell
-from Systems.MolecularSystem import MolecularSystem
+from Systems.AbstractSystem import System
 
 
 def computeSpeciation(file: str):
@@ -23,10 +24,10 @@ def computeSpeciation(file: str):
 
             distanceMatrixArray = distanceMatrix(x, y, z, size)
             neighborsPerAtomDict = neighborsPerAtom(
-                distanceMatrixArray, frame.system.atoms
+                distanceMatrixArray, frame.system.components
             )
             moleculesList = inferMolecules(neighborsPerAtomDict)
-            yield str(i) + " " + str(MolecularSystem(moleculesList).asDict) + "\n"
+            yield str(i) + " " + str(System[Molecule](moleculesList).asDict) + "\n"
 
     speciationsStr = list(speciationYielder(frames))
 

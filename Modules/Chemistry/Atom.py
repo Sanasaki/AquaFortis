@@ -4,13 +4,11 @@ from Classes.Vector import Vector
 
 
 class Atom(Vector):
-    canHaveChildren = False
-    # Atomic number and weight could be future implementations
-    # __slots__ = (
-    #     "chemSymbol",
-    #     #  "atomicNumber",
-    #     #  "atomicWeight"
-    # )
+    __slots__ = "chemSymbol"
+
+    # @property
+    # def chemSymbol(self) -> str:
+    #     return self.label
 
     def __init__(
         self,
