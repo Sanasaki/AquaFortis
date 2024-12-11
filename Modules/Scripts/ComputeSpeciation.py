@@ -2,8 +2,8 @@ import concurrent.futures
 
 from Chemistry.Molecule import Molecule
 from Classes.AtomicSystem import AtomicSystem
-from Classes.FileTypes.FileXYZ import FileTrajectory
 from Classes.Speciation import Speciation
+from FileTypes.FileXYZ import FileTrajectory
 from Functions.FxDistanceMatrix import distanceMatrix
 from Functions.FxInferMolecules import inferMolecules
 from Functions.FxNeighborsMatrix import neighborsMatrix

@@ -3,9 +3,9 @@ from typing import Any
 
 import numpy as np
 import numpy.typing as npt
-from Classes.FileTypes.CP2K import FileCP2Kinput
-from Classes.FileTypes.FileXYZ import FileTrajectory
 from Classes.InteractiveSpeciation import InteractiveSpeciation
+from FileTypes.CP2K import FileCP2Kinput
+from FileTypes.FileXYZ import FileTrajectory
 
 
 def toCodomain(dynamicDict: list[dict[Any, int]]) -> dict[Any, npt.NDArray[np.int64]]:

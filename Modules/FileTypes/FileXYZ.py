@@ -3,9 +3,9 @@ from itertools import islice
 
 from Classes.AtomicSystem import AtomicSystem
 from Classes.AtomicSystemFactory import createAtomicSystem
-from Classes.FileTypes.CP2K import FileCP2Kinput
-from Classes.FileTypes.File import File
 from Classes.Trajectory import Trajectory
+from FileTypes.CP2K import FileCP2Kinput
+from FileTypes.File import File
 
 
 class FileTrajectory(File):

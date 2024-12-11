@@ -3,8 +3,8 @@ from typing import Any
 
 import globalConfigs
 from Chemistry.Atom import Atom
-from Classes.FileTypes.File import File
-from Classes.FileTypes.FileXYZ import FileTrajectory
+from FileTypes.File import File
+from FileTypes.FileXYZ import FileTrajectory
 
 
 class CP2K:

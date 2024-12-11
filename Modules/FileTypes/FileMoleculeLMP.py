@@ -1,4 +1,4 @@
-from Classes.FileTypes.File import File
+from FileTypes.File import File
 
 
 class FileMoleculeLMP(File):
