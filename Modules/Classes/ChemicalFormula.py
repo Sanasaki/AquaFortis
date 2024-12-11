@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from Classes.Chemistry.Atom import Atom
+from Chemistry.Atom import Atom
 
 
 @dataclass(slots=True)

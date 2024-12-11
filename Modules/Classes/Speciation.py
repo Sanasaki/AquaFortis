@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
+from Chemistry.Molecule import Molecule
 from Classes.ChemicalFormula import ChemicalFormula
-from Classes.Chemistry.Molecule import Molecule
 
 
 @dataclass(slots=True)

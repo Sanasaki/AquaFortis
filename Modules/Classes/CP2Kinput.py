@@ -2,7 +2,7 @@ import json
 from typing import Any
 
 import globalConfigs
-from Classes.Chemistry.Atom import Atom
+from Chemistry.Atom import Atom
 from Classes.FileTypes.File import File
 from Classes.FileTypes.FileXYZ import FileTrajectory
 

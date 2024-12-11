@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from typing import Any
 
-from Classes.Chemistry.Molecule import Molecule
+from Chemistry.Molecule import Molecule
 
 
 class InteractiveSpeciation:

@@ -2,8 +2,8 @@ import re
 from typing import Any
 
 import globalConfigs
+from Chemistry.Atom import Atom
 from Classes.ChemicalFormula import ChemicalFormula
-from Classes.Chemistry.Atom import Atom
 from Classes.Vector import Vector
 from matplotlib import pyplot as plt
 

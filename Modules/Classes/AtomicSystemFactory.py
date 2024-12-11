@@ -1,8 +1,8 @@
 from collections.abc import Iterable
 
 import numpy as np
+from Chemistry.Atom import Atom
 from Classes.AtomicSystem import AtomicSystem
-from Classes.Chemistry.Atom import Atom
 
 
 def createAtomicSystem(

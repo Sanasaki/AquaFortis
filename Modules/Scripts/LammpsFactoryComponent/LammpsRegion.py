@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Classes.Chemistry.Molecule import Molecule
+from Chemistry.Molecule import Molecule
 from Classes.Speciation import Speciation
 from Scripts.LammpsFactoryComponent.LammpsScriptComponent import LammpsScriptComponent
 

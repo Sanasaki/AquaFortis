@@ -3,8 +3,8 @@ from functools import cached_property
 import globalConfigs
 import numpy as np
 import numpy.typing as npt
-from Classes.Chemistry.Atom import Atom
-from Classes.Chemistry.Molecule import Molecule
+from Chemistry.Atom import Atom
+from Chemistry.Molecule import Molecule
 
 # from Classes.Speciation import Speciation
 from matplotlib import pyplot as plt

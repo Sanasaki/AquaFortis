@@ -1,6 +1,6 @@
 import numpy as np
 import numpy.typing as npt
-from Classes.Chemistry.Atom import Atom
+from Chemistry.Atom import Atom
 
 
 def neighborsPerAtom(
