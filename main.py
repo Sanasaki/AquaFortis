@@ -3,8 +3,8 @@ from typing import Any
 
 from Classes.FileTypes.CP2K import FileCP2Kinput
 from Classes.FileTypes.FileXYZ import FileTrajectory
-from Classes.InteractiveSpeciation import InteractiveSpeciation
 from Classes.Trajectory import Trajectory
+from Interfaces.InteractiveSpeciation import InteractiveSpeciation
 
 
 def main(**argv: Any) -> None:

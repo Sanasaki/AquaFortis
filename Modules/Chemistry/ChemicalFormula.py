@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Self
 
 from Chemistry.Atom import Atom
 
@@ -12,6 +12,9 @@ class ChemicalFormula:
     """
 
     formula: str
+
+    def __call__(self):
+        return self.formula
 
     # def __init__(self, inputName: str) -> None:
     #     assert isinstance(inputName, str)
@@ -30,7 +33,7 @@ class ChemicalFormula:
     #         return cls(condensedFormula)
 
     @classmethod
-    def fromAtoms(cls, listOfAtoms: list["Atom"]) -> "ChemicalFormula":
+    def fromAtoms(cls, listOfAtoms: list["Atom"]) -> Self:
         countH: int = 0
         countN: int = 0
         countO: int = 0

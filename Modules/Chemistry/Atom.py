@@ -1,9 +1,10 @@
 from typing import Any
 
 from Classes.Vector import Vector
+from Systems.AbstractSystem import Component
 
 
-class Atom(Vector):
+class Atom(Vector, Component):
     canHaveChildren = False
     # Atomic number and weight could be future implementations
     __slots__ = (
@@ -22,7 +23,8 @@ class Atom(Vector):
         z: float = None,
     ):
         super().__init__(x, y, z)
-        self.chemSymbol: str = chemSymbol
+        self.label: str = chemSymbol
+        self.chemSymbol = self.label
         # self.atomicNumber:  int     = atomicNumber
         # self.atomicWeight:  float   = atomicWeight
 

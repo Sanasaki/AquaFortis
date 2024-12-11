@@ -3,17 +3,20 @@ from typing import Any
 
 import globalConfigs
 from Chemistry.Atom import Atom
-from Classes.ChemicalFormula import ChemicalFormula
 from Classes.Vector import Vector
 from matplotlib import pyplot as plt
+from Systems.AbstractSystem import Component
 
 
-class Molecule(Vector):
+class Molecule(Vector, Component):
     atomicSystemSize: float = 30
+    __slots__ = "atoms", "label"
 
     def __init__(self, atomList: list[Atom]):
         self.atoms = atomList
-        self.chemicalFormula = ChemicalFormula.fromAtoms(self.atoms)
+        self.label = self.inferFormula(self.atoms)
+        self.chemicalFormula = self.label
+        self.formula = self.label
 
     def __repr__(self):
         return f"{self.chemicalFormula}: {self.atoms}"
@@ -42,13 +45,13 @@ class Molecule(Vector):
         ax.scatter3D(x, y, z, c=colorList, s=100)
         plt.show()
 
-    @classmethod
-    def fromAtoms(cls, atoms: list["Atom"]) -> "Molecule":
-        try:
-            atoms[-1].chemSymbol
-        except AttributeError:
-            raise ValueError("Input is not a list of Atom objects")
-        return cls(atoms)
+    # @classmethod
+    # def fromAtoms(cls, atoms: list["Atom"]) -> "Molecule":
+    #     try:
+    #         atoms[-1].chemSymbol
+    #     except AttributeError:
+    #         raise ValueError("Input is not a list of Atom objects")
+    #     return cls(atoms)
 
     @classmethod
     def fromChemicalFormula(cls, chemicalFormula: str) -> "Molecule":
@@ -64,13 +67,50 @@ class Molecule(Vector):
             atomicComposition += [element] * int(elementCount)
         return Molecule(atomicComposition)
 
+    @classmethod
+    def inferFormula(cls, listOfAtoms: list["Atom"]) -> str:
+        countH: int = 0
+        countN: int = 0
+        countO: int = 0
+        for child in listOfAtoms:
+            if child.__repr__() == "H":
+                countH += 1
+            if child.__repr__() == "N":
+                countN += 1
+            if child.__repr__() == "O":
+                countO += 1
+
+        if countH == 0:
+            strH: str = ""
+        elif countH == 1:
+            strH: str = "H"
+        else:
+            strH: str = f"H{countH}"
+
+        if countN == 0:
+            strN: str = ""
+        elif countN == 1:
+            strN: str = "N"
+        else:
+            strN: str = f"N{countN}"
+
+        if countO == 0:
+            strO: str = ""
+        elif countO == 1:
+            strO: str = "O"
+        else:
+            strO: str = f"O{countO}"
+
+        name: str = f"{''.join([strH, strN, strO])}"
+        return name
+
 
 def main():
     hydrogen = Atom("H", 1.0, 1.0, 1.0)
     oxygen = Atom("O", 9.0, 9.0, 9.0)
     someList = [hydrogen, oxygen]
 
-    newMolecule = Molecule.fromAtoms(someList)
+    newMolecule = Molecule(someList)
     someOtherMolecule = Molecule.fromChemicalFormula("HNO3")
     print(newMolecule)
     print(someOtherMolecule)

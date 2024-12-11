@@ -20,7 +20,5 @@ class FileCP2Kinput(File):
                     self.cp2kAtomCount = atomCount
                     break
 
-        test = 1
-
     def __repr__(self):
         return f"CP2K file: {self.name}"

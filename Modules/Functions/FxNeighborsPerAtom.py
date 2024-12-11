@@ -1,24 +1,35 @@
+import globalConfigs
 import numpy as np
 import numpy.typing as npt
 from Chemistry.Atom import Atom
 
 
 def neighborsPerAtom(
-    neighborsMatrix: npt.NDArray[np.float64], atoms: list["Atom"]
+    distanceMatrix: npt.NDArray[np.float64], atoms: list["Atom"]
 ) -> dict[Atom, list[Atom]]:
-    # Zip function is very slow, so it should be replaced with a dict update here
-    # neighbors = {}
-    # this atom neighbor = {i : self.atoms[int(j)]}
-    # neighbors.update(this atom neighbor)
-    neighbors: list[list[Atom]] = []
+    def getNeighbors(
+        distanceMatrix: npt.NDArray[np.float64], isOneIndexed: bool = False
+    ) -> npt.NDArray[np.int64]:
+        neighborsMatrix = np.where(distanceMatrix < globalConfigs.cutOff, 1, np.nan)
 
-    for i in range(len(neighborsMatrix)):
-        listOfIndex = (
-            (neighborsMatrix[i, :])[~np.isnan(neighborsMatrix[i, :])]
+        # Multiplying each col by its index, thus transforming 1 -> index
+        neighborsMatrix[:] *= range(len(distanceMatrix[0]))
+
+        if isOneIndexed is True:
+            neighborsMatrix[:] += 1
+
+        return neighborsMatrix
+
+    neighborsMatrix = getNeighbors(distanceMatrix)
+    atomToNeighborsMap: dict[Atom, list[Atom]] = {}
+
+    for atomIndex, atom in enumerate(atoms):
+        neighborIndexes: list[int] = (
+            (neighborsMatrix[atomIndex, :])[~np.isnan(neighborsMatrix[atomIndex, :])]
         ).tolist()
-        iNeighbors: list[Atom] = []
-        for j in listOfIndex:
-            iNeighbors.append(atoms[int(j)])
-        neighbors.append(iNeighbors)
 
-    return {atom: neighbors for atom, neighbors in zip(atoms, neighbors)}
+        for neighborIndex in neighborIndexes:
+            neighbor = atoms[int(neighborIndex)]
+            atomToNeighborsMap[atom] = atomToNeighborsMap.get(atom, []) + [neighbor]
+
+    return atomToNeighborsMap

@@ -1,20 +1,22 @@
 from abc import ABC
-from dataclasses import dataclass
+from typing import Self
 
 
-@dataclass(slots=True)
 class Vector(ABC):
-    x: float = 0.0
-    y: float = 0.0
-    z: float = 0.0
+    __slots__ = "x", "y", "z"
 
-    def __add__(self, other: "Vector") -> "Vector":
+    def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0):
+        self.x: float = x
+        self.y: float = y
+        self.z: float = z
+
+    def __add__(self, other: Self) -> "Vector":
         return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
 
-    def __sub__(self, other: "Vector") -> "Vector":
+    def __sub__(self: Self, other: Self) -> "Vector":
         return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
 
-    def setOrigin(self, other: "Vector") -> None:
+    def setOrigin(self, other: Self) -> None:
         self.x -= other.x
         self.y -= other.y
         self.z -= other.z
@@ -23,8 +25,8 @@ class Vector(ABC):
     def magnitude(self) -> float:
         return (self.x**2 + self.y**2 + self.z**2) ** 0.5
 
-    def __repr__(self):
-        return f"Vector({self.x}, {self.y}, {self.z})"
+    # def __repr__(self):
+    #     return f"Vector({self.x}, {self.y}, {self.z})"
 
     @property
     def position(self):

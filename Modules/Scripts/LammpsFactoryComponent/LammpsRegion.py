@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 from Chemistry.Molecule import Molecule
-from Classes.Speciation import Speciation
 from Scripts.LammpsFactoryComponent.LammpsScriptComponent import LammpsScriptComponent
+from Systems.Speciation import MolecularSystem
 
 
 @dataclass
@@ -226,7 +226,7 @@ class LammpsMolecules(RegionPart, LammpsScriptComponent):
                 }
             )
 
-    def addMolecules(self, speciation: Speciation):
+    def addMolecules(self, speciation: MolecularSystem):
         for chemicalFormula, moleculeCount in speciation.species.items():
             self.addMolecule(chemicalFormula.formula, len(moleculeCount))
 
@@ -238,7 +238,7 @@ def test_LammpsRegion():
     water = Molecule.fromChemicalFormula("H2O")
 
     molList = [nitric] * 60 + [water] * 50
-    testSpeciation = Speciation.fromList(molList)
+    testSpeciation = MolecularSystem(molList)
 
     # test.addMolecule("HNO3", 10)
     test.addMolecules(testSpeciation)

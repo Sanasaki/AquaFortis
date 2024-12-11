@@ -1,34 +1,31 @@
+from Simulation.SimulationCell import SimulationCell
 
 
+class Trajectory:
+    timestep: float = 0.5
+    framesPerPs: int = int(1000 / timestep)
 
-from Classes.AtomicSystem import AtomicSystem
-from Classes.Speciation import Speciation
-
-
-class Trajectory():
-    timestep:       float   = 0.5
-    framesPerPs:    int     = int(1000 / timestep)
-
-    def __init__(self, frames: list['AtomicSystem']=None):
+    def __init__(self, frames: list["SimulationCell"] = None):
         self.frames = frames
 
     def __repr__(self):
         return f"Trajectory with {len(self.frames)} frames"
 
-    @property
-    def dynamicSpeciation(self) -> list['Speciation']:
-        return [frame.speciation for frame in self.frames]
-    
+    # @property
+    # def dynamicSpeciation(self) -> list["MolecularSystem"]:
+    #     return [frame.speciation for frame in self.frames]
+
     @property
     def duration(self) -> float:
         return len(self.frames) * self.timestep
-    
+
     @property
     def children(self):
         return self.frames
-    
+
     def plot(self):
         return self
+
     # def __iter__(self, start=0, end=None):
     #     i = start
     #     if end is None: end = self.length
@@ -38,13 +35,11 @@ class Trajectory():
     #             i += 1
     #         except IndexError:
     #             raise StopIteration
-    
-
 
 
 # class AtomicSystem(ABC):
 #     __slots__ = ("atoms", "_superSet")
-    
+
 #     @property
 #     def superSet(self) -> 'AtomicSystem':
 #         return self._superSet
@@ -77,16 +72,6 @@ class Trajectory():
 #     pass
 
 
-
-
-
-
-
-
-
-
-
-
 # Reading order : Trajectory -> Frames -> Atoms
 # Should be done as whole in pandas/numpy for quick processing
 
@@ -94,8 +79,8 @@ class Trajectory():
 # Should be done for selected frame/range of frame to not overload the memory
 
 # """
-# I should note that using Pandas is fast enough most of the time, 
-# and you get the benefit of Pandas’ sophisticated indexing features. 
+# I should note that using Pandas is fast enough most of the time,
+# and you get the benefit of Pandas’ sophisticated indexing features.
 # It’s only in loops that the microseconds start to add up to minutes.
 # """
 
@@ -103,73 +88,72 @@ class Trajectory():
 #     pass
 
 
-    # timestep:       float   = 0.5
-    # framesPerPs:    int     = int(1000 / timestep)
-    # linesToIgnore:  int     = 2
+# timestep:       float   = 0.5
+# framesPerPs:    int     = int(1000 / timestep)
+# linesToIgnore:  int     = 2
 
-    # __slots__ = ("trajectory", "atomNumber", "chunkSize")
-    # def __init__(self, filePath: str, atomNumber:int = None) -> None:
-    #     super().__init__(filePath)
-    #     self.atomNumber:    int = self.getAtomNumber() if atomNumber is None else atomNumber
-    #     self.chunkSize:     int = self.atomNumber + FileTrajectory.linesToIgnore
-    #     pass
+# __slots__ = ("trajectory", "atomNumber", "chunkSize")
+# def __init__(self, filePath: str, atomNumber:int = None) -> None:
+#     super().__init__(filePath)
+#     self.atomNumber:    int = self.getAtomNumber() if atomNumber is None else atomNumber
+#     self.chunkSize:     int = self.atomNumber + FileTrajectory.linesToIgnore
+#     pass
 
-    # def readlines(self) -> list[dict[str, int]]:
-    #     with open(self.filePath, 'r') as file:
-    #         return file.readlines()
-    
-    # def getDynamicSpeciation(self, range):
-    #     self.trajectory.buildSubSet(range)
-    #     pass
-    
-    
-    # def getPicosecond(self, picosecond):
-    #     def getFrame(index):
-    #         theFrameStartsAt = index * self.chunkSize
-    #         return theFrameStartsAt
-        
-    #     # 1 picosecond = 1000 fs
-    #     # 1 fs = 2 timestep
-    #     # 1 pico = 2000 timestep
-    #     thePicoSecondStartsAtTimestep = picosecond * FileTrajectory.framesPerPs
-    #     # theFrameStartsAt = thePicoSecondStartsAtTimestep * (self.chunkSize)
-    #     theFrameStartsAt = getFrame(thePicoSecondStartsAtTimestep)
-    #     return int(theFrameStartsAt)
-    
-    # def printPicosecond(self, picosecond):
-    #     theFrameStartsAt = self.getPicosecond(picosecond)
-    #     theFrameEndsAt = self.getPicosecond(picosecond+1)
-    #     print(theFrameStartsAt, theFrameEndsAt)
-    #     # return
-    #     frames = self.readlines()
-    #     for i, frame in enumerate(range(theFrameStartsAt, theFrameEndsAt, self.chunkSize)):
-    #         print(i)
-    #         # selectedFrames = frames[i*theFrameStartsAt:(i+1)*theFrameEndsAt]
-    #         print(frame)
-    #     pass
-    
-    # @FxProcessTime
+# def readlines(self) -> list[dict[str, int]]:
+#     with open(self.filePath, 'r') as file:
+#         return file.readlines()
 
-    # pass
-        
+# def getDynamicSpeciation(self, range):
+#     self.trajectory.buildSubSet(range)
+#     pass
 
 
-    # timestep:       float   = 0.5
-    # framesPerPs:    int     = int(1000 / timestep)
+# def getPicosecond(self, picosecond):
+#     def getFrame(index):
+#         theFrameStartsAt = index * self.chunkSize
+#         return theFrameStartsAt
 
-    # __slots__ = ("_frames", "time")
-    # def __init__(self) -> None:
-    #     self._frames = []
-    #     pass
+#     # 1 picosecond = 1000 fs
+#     # 1 fs = 2 timestep
+#     # 1 pico = 2000 timestep
+#     thePicoSecondStartsAtTimestep = picosecond * FileTrajectory.framesPerPs
+#     # theFrameStartsAt = thePicoSecondStartsAtTimestep * (self.chunkSize)
+#     theFrameStartsAt = getFrame(thePicoSecondStartsAtTimestep)
+#     return int(theFrameStartsAt)
 
-    # def buildSubSet(self):
-    #     self.frames = []
-    #     pass
+# def printPicosecond(self, picosecond):
+#     theFrameStartsAt = self.getPicosecond(picosecond)
+#     theFrameEndsAt = self.getPicosecond(picosecond+1)
+#     print(theFrameStartsAt, theFrameEndsAt)
+#     # return
+#     frames = self.readlines()
+#     for i, frame in enumerate(range(theFrameStartsAt, theFrameEndsAt, self.chunkSize)):
+#         print(i)
+#         # selectedFrames = frames[i*theFrameStartsAt:(i+1)*theFrameEndsAt]
+#         print(frame)
+#     pass
 
-    # @property
-    # def time(self):
-    #     return self._frames
-    
-    # @property
-    # def frames(self):
-    #     return self._frames
+# @FxProcessTime
+
+# pass
+
+
+# timestep:       float   = 0.5
+# framesPerPs:    int     = int(1000 / timestep)
+
+# __slots__ = ("_frames", "time")
+# def __init__(self) -> None:
+#     self._frames = []
+#     pass
+
+# def buildSubSet(self):
+#     self.frames = []
+#     pass
+
+# @property
+# def time(self):
+#     return self._frames
+
+# @property
+# def frames(self):
+#     return self._frames

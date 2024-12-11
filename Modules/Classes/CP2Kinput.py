@@ -79,13 +79,13 @@ def main():
     xyzFile = FileTrajectory(
         globalConfigs.testFilesDirPath + "/xyz/80HNO3-20H2O-1-pos-1-f4.xyz"
     )
-    atomicSystem = xyzFile.trajectory.frames[0]
+    simulationCell = xyzFile.trajectory.frames[0]
 
     cp2k = CP2K.readJSON("cp2k_input.json")
 
-    cp2k["FORCE_EVAL.SUBSYS.CELL.ABC"] = [atomicSystem.size] * 3
+    cp2k["FORCE_EVAL.SUBSYS.CELL.ABC"] = [simulationCell.size] * 3
     cp2k["FORCE_EVAL.SUBSYS.COORD"] = {
-        atom: [atom.x, atom.y, atom.z] for atom in atomicSystem
+        atom: [atom.x, atom.y, atom.z] for atom in simulationCell.system
     }
 
     CP2K.writeInput(cp2k, "cp2k_input_copy.inp")
