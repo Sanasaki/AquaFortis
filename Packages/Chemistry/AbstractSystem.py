@@ -15,6 +15,9 @@ class Component(ABC):
         self.label: str = label
 
 
+# component = TypeVar("component", bound=Vector, covariant=True)
+
+
 class System[component: Vector](Vector):
     """
     tl;dr System is Vector space, and is itself a Vector.\n
@@ -27,7 +30,7 @@ class System[component: Vector](Vector):
 
     def __init__(
         self,
-        components: list[component] = None,
+        components: list[component] | None = None,
         x: float = 0.0,
         y: float = 0.0,
         z: float = 0.0,

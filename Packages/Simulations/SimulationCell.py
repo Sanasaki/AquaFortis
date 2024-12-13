@@ -1,11 +1,12 @@
 from collections.abc import Iterable
 
-import globalConfigs
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-from Chemistry.Atom import Atom
-from Systems.AbstractSystem import System
+
+import globalConfigs
+from Packages.Chemistry.AbstractSystem import System
+from Packages.Chemistry.Atom import Atom
 
 
 class SimulationCell:
@@ -43,7 +44,7 @@ class SimulationCell:
 
     @classmethod
     def fromIterable(
-        cls, atomIterable: Iterable[str], size: float = None
+        cls, atomIterable: Iterable[str], size: float = 0.0
     ) -> "SimulationCell":
         atoms: list["Atom"] = []
         atomSymbols: list[str] = []
@@ -65,10 +66,3 @@ class SimulationCell:
         atomicSystem = System[Atom](components=atoms)
         numpyArrays = (atomSymbols, xArray, yArray, zArray)
         return cls(atomicSystem, data=numpyArrays, cellSize=size)
-
-    @classmethod
-    def fromIterablePP(
-        cls, atomIterable: Iterable[str], size: float = None
-    ) -> "SimulationCell":
-        atomList = [Atom.fromStr(atomLine) for atomLine in atomIterable]
-        return cls(System[Atom](components=atomList), data=None, cellSize=size)

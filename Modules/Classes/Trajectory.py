@@ -1,4 +1,4 @@
-from Simulation.SimulationCell import SimulationCell
+from Packages.Simulations.SimulationCell import SimulationCell
 
 
 class Trajectory:

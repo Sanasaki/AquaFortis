@@ -2,14 +2,15 @@ import re
 from typing import Any
 
 import globalConfigs
-from Chemistry.Atom import Atom
 from matplotlib import pyplot as plt
-from Systems.AbstractSystem import System
+
+from Packages.Chemistry.AbstractSystem import System
+from Packages.Chemistry.Atom import Atom
 
 
 class Molecule(System[Atom]):
     atomicSystemSize: float = 30
-    __slots__ = "atoms"
+    __slots__ = "atoms", "formula"
     # , "label", "formula"
 
     # @property
@@ -21,7 +22,7 @@ class Molecule(System[Atom]):
         self.atoms = self.components
 
         self.label = self.inferFormula(atomList)
-        # self.chemicalFormula = self.label
+        self.formula = self.label
         # self.formula = self.label
 
     def __repr__(self):
@@ -112,14 +113,15 @@ class Molecule(System[Atom]):
 
 
 def main():
-    hydrogen = Atom("H", 1.0, 1.0, 1.0)
-    oxygen = Atom("O", 9.0, 9.0, 9.0)
+    hydrogen = Atom(chemSymbol="H", x=1.0, y=1.0, z=1.0)
+    oxygen = Atom(chemSymbol="O", x=9.0, y=9.0, z=9.0)
     someList = [hydrogen, oxygen]
 
     newMolecule = Molecule(someList)
     someOtherMolecule = Molecule.fromChemicalFormula("HNO3")
     print(newMolecule)
     print(someOtherMolecule)
+    # print(isinstance(newMolecule, Vector))
 
 
 if __name__ == "__main__":

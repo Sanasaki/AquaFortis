@@ -1,11 +1,9 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-
-from Scripts.LammpsFactoryComponent.LammpsScriptComponent import LammpsScriptComponent
 
 
 @dataclass
-class LammpsFix(LammpsScriptComponent):
+class LammpsFix(ABC):
     fixName: str
     fixedAtoms: str = "all"
     fixMolecule: bool = True
@@ -49,13 +47,15 @@ class FixNVT(LammpsFix):
         fixMolecule: bool = True,
     ):
         super().__init__(
-            fixName=fixName, fixedAtoms=fixedAtoms, fixMolecule=fixMolecule
+            fixName=fixName,
+            fixedAtoms=fixedAtoms,
+            fixMolecule=fixMolecule,
+            runTime=runTime,
         )
         self.fixType: str = "rigid/nvt/small"
         self.thermostat: Thermostat = Thermostat(
             temperature=temperature, thermoTimestep=thermoTimeStep
         )
-        self.runTime: int = runTime
 
     def currentFixspecifities(self) -> str:
         return f"temp {self.thermostat.temperature} {self.thermostat.temperature} {self.thermostat.thermoTimestep}"
@@ -83,7 +83,6 @@ class FixNPT(FixNVT):
         )
         self.fixType: str = "rigid/npt/small"
         self.barostat: Barostat = Barostat(pressure=pressure, baroTimestep=baroTimeStep)
-        self.runTime: int = runTime
 
     def currentFixspecifities(self) -> str:
         return (

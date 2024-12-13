@@ -1,13 +1,14 @@
 import concurrent.futures
 
-from Chemistry.Molecule import Molecule
 from FileTypes.FileXYZ import FileTrajectory
 from Functions.FxDistanceMatrix import distanceMatrix
 from Functions.FxInferMolecules import inferMolecules
 from Functions.FxNeighborsPerAtom import neighborsPerAtom
 from Functions.FxStaticFunctions import FxProcessTime, pickFiles
-from Simulation.SimulationCell import SimulationCell
-from Systems.AbstractSystem import System
+
+from Packages.Chemistry.AbstractSystem import System
+from Packages.Chemistry.Molecule import Molecule
+from Packages.Simulations.SimulationCell import SimulationCell
 
 
 @FxProcessTime

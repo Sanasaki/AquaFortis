@@ -1,17 +1,20 @@
 import json
+from dataclasses import dataclass, field
 from typing import Any
 
-import globalConfigs
-from Chemistry.Atom import Atom
 from FileTypes.File import File
 from FileTypes.FileXYZ import FileTrajectory
 
+import globalConfigs
+from Packages.Chemistry.Atom import Atom
 
+
+@dataclass(slots=True)
 class CP2K:
-    __slots__ = ["data"]
+    data: dict[str, Any] = field(default_factory=dict)
 
-    def __init__(self, data: dict[str, Any] = None) -> None:
-        self.data = data or {}
+    # def __init__(self, data: dict[str, Any] = None) -> None:
+    #     self.data = data or {}
 
     def setSystem(self, atoms: list[Atom] = None) -> None:
         self.data["FORCE_EVAL.SUBSYS.COORD"] = atoms

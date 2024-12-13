@@ -1,5 +1,5 @@
-from Chemistry.Atom import Atom
-from Systems.AbstractSystem import System
+from Packages.Chemistry.AbstractSystem import System
+from Packages.Chemistry.Atom import Atom
 
 
 class AtomicSystem(System[Atom]):

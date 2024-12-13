@@ -1,5 +1,5 @@
-from Chemistry.Atom import Atom
-from Chemistry.Molecule import Molecule
+from Packages.Chemistry.Atom import Atom
+from Packages.Chemistry.Molecule import Molecule
 
 
 def inferMolecules(neighborsPerAtom: dict[Atom, list[Atom]]) -> list[Molecule]:

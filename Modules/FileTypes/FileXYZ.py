@@ -4,7 +4,8 @@ from itertools import islice
 from Classes.Trajectory import Trajectory
 from FileTypes.CP2K import FileCP2Kinput
 from FileTypes.File import File
-from Simulation.SimulationCell import SimulationCell
+
+from Packages.Simulations.SimulationCell import SimulationCell
 
 
 class FileTrajectory(File):

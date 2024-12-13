@@ -1,5 +1,6 @@
 from Chemistry.Molecule import Molecule
-from Systems.AbstractSystem import System
+
+from Packages.Chemistry.AbstractSystem import System
 
 
 class MolecularSystem(System[Molecule]):

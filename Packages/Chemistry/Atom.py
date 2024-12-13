@@ -14,9 +14,9 @@ class Atom(Vector):
         self,
         # atomicNumber: int=None,
         # atomicWeight: float=None,
-        x: float = None,
-        y: float = None,
-        z: float = None,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
         chemSymbol: str = "",
     ):
         super().__init__(x, y, z, label=chemSymbol)
