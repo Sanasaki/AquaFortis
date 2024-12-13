@@ -1,5 +1,6 @@
 import TestConfigs
-from Scripts.ComputeSpeciation import computeSpeciation
+
+from Packages.Analysis.ComputeSpeciation import computeSpeciation
 
 
 def test_speciation():

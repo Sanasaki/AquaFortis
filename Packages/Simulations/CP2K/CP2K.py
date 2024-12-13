@@ -1,4 +1,4 @@
-from FileTypes.File import File
+from Classes.File import File
 
 
 class FileCP2Kinput(File):

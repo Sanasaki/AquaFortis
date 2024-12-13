@@ -1,10 +1,10 @@
 from collections.abc import Iterator
 from itertools import islice
 
+from Classes.File import File
 from Classes.Trajectory import Trajectory
-from FileTypes.CP2K import FileCP2Kinput
-from FileTypes.File import File
 
+from Packages.Simulations.CP2K.CP2K import FileCP2Kinput
 from Packages.Simulations.SimulationCell import SimulationCell
 
 

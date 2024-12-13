@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 
-from FileTypes.File import File
+from Classes.File import File
 
 
 class FileSpeciation(File):

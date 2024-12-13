@@ -1,9 +1,9 @@
 from tkinter import filedialog as fd
 from typing import Any
 
-from FileTypes.CP2K import FileCP2Kinput
-from FileTypes.FileXYZ import FileTrajectory
-from Interfaces.InteractiveSpeciation import InteractiveSpeciation
+from Packages.Analysis.FileXYZ import FileTrajectory
+from Packages.Analysis.InteractiveSpeciation import InteractiveSpeciation
+from Packages.Simulations.CP2K.CP2K import FileCP2Kinput
 
 # def toCodomain(dynamicDict: list[dict[Any, int]]) -> dict[Any, npt.NDArray[np.int64]]:
 #     foundKeys: dict[Any, list[int]] = {}

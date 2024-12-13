@@ -2,10 +2,10 @@ import json
 from dataclasses import dataclass, field
 from typing import Any
 
-from FileTypes.File import File
-from FileTypes.FileXYZ import FileTrajectory
+from Classes.File import File
 
 import globalConfigs
+from Packages.Analysis.FileXYZ import FileTrajectory
 from Packages.Chemistry.Atom import Atom
 
 

@@ -13,7 +13,7 @@ class LammpsScriptUnit(ABC):
     def build(self) -> str: ...
 
 
-class memoryHandler(LammpsScriptUnit):
+class MemoryHandler(LammpsScriptUnit):
     def allocateMemory(self):
         for lammpsMolecule in self.context.molecules:
             self.context.memoryAllocation["atom/types"] += lammpsMolecule.atoms
@@ -49,8 +49,7 @@ class memoryHandler(LammpsScriptUnit):
         return memoryContent
 
 
-@dataclass
-class runHandler(LammpsScriptUnit):
+class RunHandler(LammpsScriptUnit):
     def build(self) -> str:
         runContent: str = "# Run\n"
         for fix in self.context.fixes:
@@ -73,7 +72,7 @@ class runHandler(LammpsScriptUnit):
         return runContent
 
 
-class preRunHandler(LammpsScriptUnit):
+class PreRunHandler(LammpsScriptUnit):
     def build(self):
         initContent: str = "# Lammps script\n"
         initContent += f"units {self.context.units}\n"
@@ -89,7 +88,7 @@ class preRunHandler(LammpsScriptUnit):
         return initContent
 
 
-class postRunHandler(LammpsScriptUnit):
+class PostRunHandler(LammpsScriptUnit):
     def build(self) -> str:
         return "# Post run\n"
 

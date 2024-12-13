@@ -7,10 +7,10 @@ from Packages.Chemistry.Molecule import Molecule
 from Packages.Simulations.Lammps.LammpsContext import LammpsContext, LammpsMolecule
 from Packages.Simulations.Lammps.LammpsUnits import (
     FileHandler,
-    memoryHandler,
-    postRunHandler,
-    preRunHandler,
-    runHandler,
+    MemoryHandler,
+    PostRunHandler,
+    PreRunHandler,
+    RunHandler,
 )
 from Packages.Simulations.Lammps.MoleculeHandler import MoleculeHandler
 from Packages.Simulations.SimulationCore import Simulation, Task
@@ -34,11 +34,11 @@ class LammpsBuilder:
 
     def __init__(self):
         self.context = LammpsContext()
-        self.prerunHandler: preRunHandler = preRunHandler(context=self.context)
-        self.memoryHandler: memoryHandler = memoryHandler(context=self.context)
+        self.prerunHandler: PreRunHandler = PreRunHandler(context=self.context)
+        self.memoryHandler: MemoryHandler = MemoryHandler(context=self.context)
         self.moleculeHandler: MoleculeHandler = MoleculeHandler(context=self.context)
-        self.runHandler: runHandler = runHandler(context=self.context)
-        self.postrunHandler: postRunHandler = postRunHandler(context=self.context)
+        self.runHandler: RunHandler = RunHandler(context=self.context)
+        self.postrunHandler: PostRunHandler = PostRunHandler(context=self.context)
         self.fileHandler: FileHandler = FileHandler(context=self.context)
 
     def convertSystem(self, system: System[Molecule]) -> list[LammpsMolecule]:
@@ -58,24 +58,18 @@ class LammpsBuilder:
             lammpsInputFile.writelines(self.assemble())
 
     def assemble(self):
-        print("0")
         buffer = StringIO()
         buffer.write(self.prerunHandler.build())
-        print("1")
         buffer.write(self.memoryHandler.build())
-        print("2")
         buffer.write(LAMMPS_LABELS.HardCodedAtoms)
         buffer.write(LAMMPS_LABELS.HardCodedBonds)
         buffer.write(LAMMPS_LABELS.HardCodedAngles)
         buffer.write("include ./input/MassesPotentials.lmp\n")
         buffer.write(self.moleculeHandler.build())
         buffer.write("include ./input/ThermoMonitoring.lmp\n")
-        print("3")
         buffer.write(self.runHandler.build())
-        print("4")
         buffer.write("include ./input/PostRun.lmp\n")
         buffer.write(self.postrunHandler.build())
-        print("5")
         return buffer.getvalue()
 
 
