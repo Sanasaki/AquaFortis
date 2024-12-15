@@ -7,8 +7,10 @@ python3.12backup/
 python313t/
 .virtualenvs/
 typings/
-LMPincludes/
+LammpsReferenceFile/
+.pytest_cache/
 
+.vimrc
 .env
 *.log
 *.pyc

@@ -1,0 +1,56 @@
+import os
+
+from Packages.Chemistry.AbstractSystem import System
+from Packages.Chemistry.Atom import Atom
+from Packages.Chemistry.Molecule import Molecule
+from Packages.Simulations.Lammps.LammpsScript import LammpsScriptLogic
+from Packages.Simulations.SimulationCore import Simulation, Task
+
+
+class LammpsJobBatch:
+    """
+    Handle a batch of related Lammps jobs.
+
+    Attributes:
+        - A dictionary of LammpsScripts.
+
+    Methods:
+        - Add script(LammpsScript)
+        - Remove script(LammpsScript)
+        + Build scripts(path).
+    """
+
+    def __init__(self):
+        self.jobs: dict[str, LammpsScriptLogic] = {}
+
+    def addJob(self, job: Simulation):
+        lammpsScript = LammpsScriptLogic.createScriptFrom(job)
+        self.jobs.update({lammpsScript.jobName: lammpsScript})
+
+    def removeJob(self, job: LammpsScriptLogic):
+        self.jobs.pop(job.jobName)
+
+    def buildJobs(self, batchPath: str = "./"):
+        for name, job in self.jobs.items():
+            jobPath = f"{batchPath}/{name}.lmp"
+            os.makedirs(batchPath, exist_ok=True)
+            with open(jobPath, "w") as file:
+                file.write(job.getBuffer())
+
+
+if __name__ == "__main__":
+    hydrogen = Atom(chemSymbol="H")
+    nitrogen = Atom(chemSymbol="N")
+    oxygen = Atom(chemSymbol="O")
+    water = Molecule([hydrogen, hydrogen, oxygen])
+    nitricAcid = Molecule([hydrogen, nitrogen, oxygen, oxygen, oxygen])
+    hydronium = Molecule([hydrogen, hydrogen, hydrogen, oxygen])
+    nitrate = Molecule([nitrogen, oxygen, oxygen, oxygen])
+    system = System[Molecule](components=[water, nitricAcid, hydronium, nitrate] * 100)
+    task = Task(ensemble="NVT", temperature=298.15, pressure=1.0, picoseconds=1000)
+    simulation = Simulation(system, [task])
+    LAMMPS = LammpsJobBatch()
+    LAMMPS.addJob(simulation)
+    LAMMPS.buildJobs(
+        batchPath=r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput"
+    )

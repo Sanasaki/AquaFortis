@@ -2,13 +2,13 @@ import shutil
 from abc import ABC
 from dataclasses import dataclass
 
-from Packages.Simulations.Lammps.LammpsContext import LammpsContext
 from Packages.Simulations.Lammps.LammpsFix import FixNPT, FixNVT
+from Packages.Simulations.Lammps.LammpsManagers import LammpsContextManager
 
 
 @dataclass
 class LammpsScriptUnit(ABC):
-    context: LammpsContext
+    context: LammpsContextManager
 
     def build(self) -> str: ...
 

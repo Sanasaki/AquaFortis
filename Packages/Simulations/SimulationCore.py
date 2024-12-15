@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from Chemistry.Molecule import Molecule
-
 from Packages.Chemistry.AbstractSystem import System
 from Packages.Chemistry.Atom import Atom
+from Packages.Chemistry.Molecule import Molecule
 
 
 @dataclass

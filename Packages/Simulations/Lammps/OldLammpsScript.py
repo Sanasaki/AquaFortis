@@ -2,9 +2,9 @@ from io import StringIO
 
 import Packages.Simulations.Lammps.LammpsLabels as LAMMPS_LABELS
 from Packages.Chemistry.AbstractSystem import System
-from Packages.Chemistry.Atom import Atom
 from Packages.Chemistry.Molecule import Molecule
-from Packages.Simulations.Lammps.LammpsContext import LammpsContext, LammpsMolecule
+from Packages.Simulations.Lammps.LammpsManagers import LammpsContextManager
+from Packages.Simulations.Lammps.LammpsMolecules import LammpsMolecule
 from Packages.Simulations.Lammps.LammpsUnits import (
     FileHandler,
     MemoryHandler,
@@ -13,10 +13,10 @@ from Packages.Simulations.Lammps.LammpsUnits import (
     RunHandler,
 )
 from Packages.Simulations.Lammps.MoleculeHandler import MoleculeHandler
-from Packages.Simulations.SimulationCore import Simulation, Task
+from Packages.Simulations.SimulationCore import Simulation
 
 
-class LammpsBuilder:
+class OldLammpsScript:
     """
     LAMMPS implementation of AtomisticModelisationEngine. When called with a Simulation instance as an argument like `LAMMPS(simulationObject)`. It builds a LAMMPS job as follows:
     ```
@@ -32,14 +32,16 @@ class LammpsBuilder:
     ```
     """
 
-    def __init__(self):
-        self.context = LammpsContext()
-        self.prerunHandler: PreRunHandler = PreRunHandler(context=self.context)
-        self.memoryHandler: MemoryHandler = MemoryHandler(context=self.context)
-        self.moleculeHandler: MoleculeHandler = MoleculeHandler(context=self.context)
-        self.runHandler: RunHandler = RunHandler(context=self.context)
-        self.postrunHandler: PostRunHandler = PostRunHandler(context=self.context)
-        self.fileHandler: FileHandler = FileHandler(context=self.context)
+    def __init__(self, contextManager: LammpsContextManager = None):
+        self.contextManager = contextManager if contextManager else LammpsContextManager()
+        self.prerunHandler: PreRunHandler = PreRunHandler(context=self.contextManager)
+        self.memoryHandler: MemoryHandler = MemoryHandler(context=self.contextManager)
+        self.moleculeHandler: MoleculeHandler = MoleculeHandler(
+            context=self.contextManager
+        )
+        self.runHandler: RunHandler = RunHandler(context=self.contextManager)
+        self.postrunHandler: PostRunHandler = PostRunHandler(context=self.contextManager)
+        self.fileHandler: FileHandler = FileHandler(context=self.contextManager)
 
     def convertSystem(self, system: System[Molecule]) -> list[LammpsMolecule]:
         moleculeBuilder = LammpsMolecule()
@@ -48,12 +50,14 @@ class LammpsBuilder:
             for molecule, amount in system.asDict.items()
         ]
 
-    def __call__(self, simulation: Simulation):
-        self.context.molecules = self.convertSystem(simulation.system)
-        self.context.fixes = simulation.task
+    def setSimulation(self, simulation: Simulation):
+        self.contextManager.molecules = self.convertSystem(simulation.system)
+        self.contextManager.fixes = simulation.task
+
+    def writeScript(self):
         self.fileHandler.execute()
         with open(
-            self.context.paths["job"] + "/AF.lmp", "w", newline="\n"
+            self.contextManager.paths["job"] + "/AF.lmp", "w", newline="\n"
         ) as lammpsInputFile:
             lammpsInputFile.writelines(self.assemble())
 
@@ -74,15 +78,4 @@ class LammpsBuilder:
 
 
 if __name__ == "__main__":
-    hydrogen = Atom(chemSymbol="H")
-    nitrogen = Atom(chemSymbol="N")
-    oxygen = Atom(chemSymbol="O")
-    water = Molecule([hydrogen, hydrogen, oxygen])
-    nitricAcid = Molecule([hydrogen, nitrogen, oxygen, oxygen, oxygen])
-    hydronium = Molecule([hydrogen, hydrogen, hydrogen, oxygen])
-    nitrate = Molecule([nitrogen, oxygen, oxygen, oxygen])
-    system = System[Molecule](components=[water, nitricAcid, hydronium, nitrate] * 100)
-    task = Task(ensemble="NVT", temperature=298.15, pressure=1.0, picoseconds=1000)
-    simulation = Simulation(system, [task])
-    LAMMPS = LammpsBuilder()
-    LAMMPS(simulation)
+    pass
