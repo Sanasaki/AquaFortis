@@ -80,7 +80,7 @@ class FileCP2K(File):
 
 def main():
     xyzFile = FileTrajectory(
-        globalConfigs.testFilesDirPath + "/xyz/80HNO3-20H2O-1-pos-1-f4.xyz"
+        globalConfigs.TEST_FILES_PATH + "/xyz/80HNO3-20H2O-1-pos-1-f4.xyz"
     )
     simulationCell = xyzFile.trajectory.frames[0]
 

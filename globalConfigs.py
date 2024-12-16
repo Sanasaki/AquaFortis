@@ -20,12 +20,12 @@ colorAtom: dict[str, str] = {"H": "green", "N": "blue", "O": "red"}
 
 cutOff: float = 1.577
 
-rootPath: str = r"C:\Users\JL252842\Documents\Thesis\Python"
-testFilesDirPath: str = rootPath + r"\TestFiles"
-testDataPath: str = rootPath + r"\Tests\TestData"
+ROOT_PYTHON_PATH: str = r"C:\Users\JL252842\Documents\Thesis\Python"
+TEST_FILES_PATH: str = ROOT_PYTHON_PATH + r"\TestFiles"
+TEST_DATA_PATH: str = ROOT_PYTHON_PATH + r"\Tests\TestData"
 
-pythonOutputPath: str = (
-    r"C:\Users\JL252842\Documents\Thesis\Data\Processed\PythonOutput"
-)
+LAB_PATH: str = r"C:\Users\JL252842\Documents\Thesis\Lab"
+MOLECULES_PATH: str = LAB_PATH + r"\ReferenceData\Molecules"
 
-moleculesPath: str = r"C:\Users\JL252842\Documents\Thesis\Lab\ReferenceData\Molecules"
+DATA_PATH: str = r"C:\Users\JL252842\Documents\Thesis\Data"
+PYTHON_OUTPUT_PATH: str = DATA_PATH + r"\Processed\PythonOutput"

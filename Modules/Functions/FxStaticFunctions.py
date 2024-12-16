@@ -11,14 +11,14 @@ import globalConfigs
 def pickAFile() -> str:
     return fd.askopenfilename(
         title="Select XYZ files",
-        initialdir=globalConfigs.testFilesDirPath,
+        initialdir=globalConfigs.TEST_FILES_PATH,
     )
 
 
 def pickFiles() -> tuple[str, ...] | Literal[""]:
     return fd.askopenfilenames(
         title="Select XYZ files",
-        initialdir=globalConfigs.testFilesDirPath,
+        initialdir=globalConfigs.TEST_FILES_PATH,
     )
 
 
@@ -81,9 +81,7 @@ def FxProcessTime(func: Callable[..., Any]) -> Callable[..., Any]:
         if timeSpent < 0.001:
             print(f"Function {func.__name__} executed in {int(timeSpent*1_000_000)} µs")
         elif timeSpent < 5:
-            print(
-                f"Function {func.__name__} executed in {float(timeSpent*1_000):.2f} ms"
-            )
+            print(f"Function {func.__name__} executed in {float(timeSpent*1_000):.2f} ms")
         else:
             h, m = divmod(timeSpent, 3_600)
             m, s = divmod(m, 60)
